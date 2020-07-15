@@ -1,5 +1,5 @@
 Doors = Container()
-Doors.z_index = -1
+Doors.z_index = 0
 
 function Doors:init()
     self.checked_buttons = 0

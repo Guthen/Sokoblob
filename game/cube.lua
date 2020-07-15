@@ -1,5 +1,5 @@
 Cubes = Container()
-Cubes.z_index = 5
+Cubes.z_index = 1
 
 --  > Create cube
 function Cubes:create( x, y )

@@ -1,6 +1,6 @@
 maps = maps or {}
 Map = Entity( {} )
-Cubes.z_index = 2
+Map.z_index = 0
 
 --  > Tile enums
 enum( "TILE_", {

@@ -1,6 +1,6 @@
 Player = Entity()
 Player.image = love.graphics.newImage( "images/blob.png" )
-Player.z_index = 5
+Player.z_index = 1
 
 --  > Create animations quads
 local quads = {}
