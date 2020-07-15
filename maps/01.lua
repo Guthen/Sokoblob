@@ -1,10 +1,12 @@
+local W, _, C, S = TILE_WALL_A, TILE_VOID, TILE_CUBE, TILE_SPOT
+
 return {
-    { 0, 1, 1, 1, 1 },
-    { 0, 1, 0, 0, 1 },
-    { 1, 1, 3, 1, 1 },
-    { 1, 0, 0, 1, 1 },
-    { 1, 0, 0, 2, 1 },
-    { 1, 1, 1, 1, 1 },
+    { W, W, W, W, W },
+    { W, _, _, _, W },
+    { W, _, C, W, W },
+    { W, _, _, W, W },
+    { W, _, _, S, W },
+    { W, W, W, W, W },
     spawn = {
         x = 4,
         y = 2,
