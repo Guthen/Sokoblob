@@ -32,76 +32,52 @@ function Player:think( dt )
 end
 
 --  > Movement
-function Player:keypress( key )
-    if key == "z" and not Map:checkCollision( self.x, self.y - 1 ) then
-        local cube = Cubes:getAt( self.x, self.y - 1 )
+function Player:move( x, y )
+    if not Map:checkCollision( self.x + x, self.y + y ) then
+        local cube = Cubes:getAt( self.x + x, self.y + y )
         if cube then
             --  > Collision with cubes 
-            if Map:checkCollision( cube.x, cube.y - 1 ) or Cubes:getAt( cube.x, cube.y - 1 ) then return end
+            if Map:checkCollision( cube.x + x, cube.y + y ) or Cubes:getAt( cube.x + x, cube.y + y ) then return end
 
             --  > Collision with closed doors
-            if Doors:getClosedDoorAt( cube.x, cube.y - 1 ) then return end
+            if Doors:getClosedDoorAt( cube.x + x, cube.y + y ) then return end
 
             --  > Move cube
-            cube:move( 0, -1 )
+            cube:move( x, y )
         end
 
-        if Doors:getClosedDoorAt( self.x, self.y - 1 ) then return end
+        if Doors:getClosedDoorAt( self.x + x, self.y + y ) then return end
 
-        self.y = self.y - 1
-        self.moves = self.moves + 1
-    elseif key == "s" and not Map:checkCollision( self.x, self.y + 1 ) then
-        local cube = Cubes:getAt( self.x, self.y + 1 )
-        if cube then
-            --  > Collision with cubes
-            if Map:checkCollision( cube.x, cube.y + 1 ) or Cubes:getAt( cube.x, cube.y + 1 ) then return end
-
-            --  > Collision with closed doors
-            if Doors:getClosedDoorAt( cube.x, cube.y + 1 ) then return end
-
-            --  > Move cube
-            cube:move( 0, 1 )
-        end
-
-        if Doors:getClosedDoorAt( self.x, self.y + 1 ) then return end
-
-        self.y = self.y + 1
-        self.moves = self.moves + 1
-    elseif key == "q" and not Map:checkCollision( self.x - 1, self.y ) then
-        local cube = Cubes:getAt( self.x - 1, self.y )
-        if cube then
-            --  > Collision with cubes
-            if Map:checkCollision( cube.x - 1, cube.y ) or Cubes:getAt( cube.x - 1, cube.y ) then return end
-
-            --  > Collision with closed doors
-            if Doors:getClosedDoorAt( cube.x - 1, cube.y ) then return end
-
-            --  > Move cube
-            cube:move( -1, 0 )
-        end
-
-        if Doors:getClosedDoorAt( self.x - 1, self.y ) then return end
-
-        self.x = self.x - 1
-        self.moves = self.moves + 1
-    elseif key == "d" and not Map:checkCollision( self.x + 1, self.y ) then
-        local cube = Cubes:getAt( self.x + 1, self.y )
-        if cube then
-            --  > Collision with cubes
-            if Map:checkCollision( cube.x + 1, cube.y ) or Cubes:getAt( cube.x + 1, cube.y ) then return end
-
-            --  > Collision with closed doors
-            if Doors:getClosedDoorAt( cube.x + 1, cube.y ) then return end
-
-            --  > Move cube
-            cube:move( 1, 0 )
-        end
-
-        if Doors:getClosedDoorAt( self.x + 1, self.y ) then return end
-
-        self.x = self.x + 1
+        self.x = self.x + x
+        self.y = self.y + y
         self.moves = self.moves + 1
     end
+end
+
+--  > Get direction from key
+local directions = {
+    ["z"] = {
+        x = 0,
+        y = -1,
+    },
+    ["s"] = {
+        x = 0,
+        y = 1,
+    },
+    ["q"] = {
+        x = -1,
+        y = 0,
+    },
+    ["d"] = {
+        x = 1,
+        y = 0,
+    },
+}
+function Player:keypress( key )
+    local dir = directions[key]
+    if not dir then return end
+
+    self:move( dir.x, dir.y )
 end
 
 function Player:draw()
