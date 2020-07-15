@@ -1,24 +1,24 @@
-Player = Entity()
-Player.image = love.graphics.newImage( "images/blob.png" )
-Player.z_index = 1
+BasePlayer = class( Entity )
+BasePlayer.image = love.graphics.newImage( "images/blob.png" )
+BasePlayer.z_index = 1
 
 --  > Create animations quads
 local quads = {}
-for x = 0, Player.image:getWidth() - tile_size, tile_size do
-    quads[#quads + 1] = love.graphics.newQuad( x, 0, tile_size, tile_size, Player.image:getDimensions() )
+for x = 0, BasePlayer.image:getWidth() - tile_size, tile_size do
+    quads[#quads + 1] = love.graphics.newQuad( x, 0, tile_size, tile_size, BasePlayer.image:getDimensions() )
 end
-Player.quads = quads
-Player.current_quad = 1
+BasePlayer.quads = quads
+BasePlayer.current_quad = 1
 
 --  > Init player
-function Player:init()
-    Player.moves = 0
-    Player.anim_x = Player.x
-    Player.anim_y = Player.y
+function BasePlayer:init()
+    self.moves = 0
+    self.anim_x = self.x
+    self.anim_y = self.y
 end
 
 local time, next_frame_time = 0, .5
-function Player:think( dt )
+function BasePlayer:think( dt )
     --  > Animation
     time = time + dt
     if time > next_frame_time then
@@ -32,7 +32,7 @@ function Player:think( dt )
 end
 
 --  > Movement
-function Player:move( x, y )
+function BasePlayer:move( x, y )
     --  > Tile collision
     if not Map:checkCollision( self.x + x, self.y + y ) then
         --  > Moving cube
@@ -79,14 +79,14 @@ local directions = {
         y = 0,
     },
 }
-function Player:keypress( key )
+function BasePlayer:keypress( key )
     local dir = directions[key]
     if not dir then return end
 
     self:move( dir.x, dir.y )
 end
 
-function Player:draw()
+function BasePlayer:draw()
     love.graphics.draw( self.image, self.quads[self.current_quad], self.anim_x * object_size, self.anim_y * object_size, 0, object_size / tile_size, object_size / tile_size )
 
     local limit = 400

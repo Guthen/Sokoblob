@@ -1,6 +1,6 @@
-maps = maps or {}
-Map = Entity( {} )
-Map.z_index = 0
+Maps = Maps or {}
+BaseMap = class( Entity )
+BaseMap.z_index = 0
 
 --  > Tile enums
 enum( "TILE_", {
@@ -14,18 +14,18 @@ enum( "TILE_", {
     DOOR_CLOSE = 7,
 } )
 
---  > Load maps
-if #maps == 0 then 
-    maps = {}
-    for i, v in ipairs( love.filesystem.getDirectoryItems( "maps" ) ) do
-        maps[#maps + 1] = require( "maps/" .. v:gsub( "%.lua", "" ) )
+--  > Load Maps
+if #Maps == 0 then 
+    Maps = {}
+    for i, v in ipairs( love.filesystem.getDirectoryItems( "Maps" ) ) do
+        Maps[#Maps + 1] = require( "Maps/" .. v:gsub( "%.lua", "" ) )
     end
 end
 
-function Map:loadMap( id )
+function BaseMap:loadMap( id )
     print( "Level: id=" .. id )
 
-    local map = maps[id]
+    local map = Maps[id]
     print( "Level: " .. ( map and "found" or "not found" ) )
     print( ( "Level: bounds w=%d h=%d" ):format( #map[1], #map ) )
 
@@ -54,25 +54,25 @@ function Map:loadMap( id )
     end
 
     --  > Map size
-    Map.w = #Map[1] * object_size
-    Map.h = #Map * object_size
+    self.w = #self[1] * object_size
+    self.h = #self * object_size
 
     --  > Create entities
     for y, yv in ipairs( self ) do
         for x, xv in ipairs( yv ) do
             if xv == TILE_CUBE then
                 Cubes:create( x, y )
-                Map[y][x] = 0
+                self[y][x] = 0
             elseif xv == TILE_DOOR or xv == TILE_DOOR_CLOSE then 
                 Doors:create( x, y ).toggled = xv == TILE_DOOR_CLOSE
-                Map[y][x] = 0
+                self[y][x] = 0
             end
         end
     end
 
     --  > Camera
     Camera.scale = map.options and map.options.scale or 1
-    Camera:moveTo( Map.w / 2 + object_size, Map.h / 2 + object_size )
+    Camera:moveTo( self.w / 2 + object_size, self.h / 2 + object_size )
 
     --  > Set player pos to spawn
     if not map.spawn then return end
@@ -80,12 +80,12 @@ function Map:loadMap( id )
     Player.y = map.spawn.y
 end
 
-function Map:init()
+function BaseMap:init()
     self.spots = 0
     self:loadMap( map_id )
 end
 
-function Map:getTileAt( x, y )
+function BaseMap:getTileAt( x, y )
     return self[y] and self[y][x]
 end
 
@@ -94,7 +94,7 @@ local collision = {
     [TILE_WALL_A] = true,
     [TILE_WALL_B] = true,
 }
-function Map:checkCollision( x, y )
+function BaseMap:checkCollision( x, y )
     return collision[self:getTileAt( x, y )]
 end
 
@@ -105,7 +105,7 @@ images[TILE_SPOT] = love.graphics.newImage( "images/spot.png" )
 images[TILE_WALL_B] = love.graphics.newImage( "images/wall_b.png" )
 images[TILE_BUTTON] = love.graphics.newImage( "images/button.png" )
 
-function Map:draw()
+function BaseMap:draw()
     --  > Draw map
     for y, yv in ipairs( self ) do
         for x, xv in ipairs( yv ) do
