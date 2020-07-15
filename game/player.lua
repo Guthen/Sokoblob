@@ -33,7 +33,9 @@ end
 
 --  > Movement
 function Player:move( x, y )
+    --  > Tile collision
     if not Map:checkCollision( self.x + x, self.y + y ) then
+        --  > Moving cube
         local cube = Cubes:getAt( self.x + x, self.y + y )
         if cube then
             --  > Collision with cubes 
@@ -46,10 +48,14 @@ function Player:move( x, y )
             cube:move( x, y )
         end
 
+        --  > Collision with closed doors
         if Doors:getClosedDoorAt( self.x + x, self.y + y ) then return end
 
+        --  > Movement
         self.x = self.x + x
         self.y = self.y + y
+
+        --  > Score
         self.moves = self.moves + 1
     end
 end

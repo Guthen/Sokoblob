@@ -55,11 +55,14 @@ end ]]
 function Cubes:checkWin()
     if #self == 0 then return false end
 
+    local confirmed_cubes = 0
     for i, v in ipairs( self ) do
-        if not v.confirmed then return false end
+        if v.confirmed then
+            confirmed_cubes = confirmed_cubes + 1
+        end
     end
 
-    return true
+    return confirmed_cubes >= Map.spots
 end
 
 --[[ function Cubes:getAt( x, y )

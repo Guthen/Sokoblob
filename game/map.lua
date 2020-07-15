@@ -32,16 +32,19 @@ function Map:loadMap( id )
     for i, v in ipairs( self ) do
         self[i] = nil
     end
-
+    
     --  > Set new map
     for y, yv in ipairs( map ) do
         self[y] = {}
         for x, xv in ipairs( yv ) do
+            --  > Smooth walls
             if xv == TILE_WALL_A then
                 local bottom_tile = map[y + 1] and map[y + 1][x]
                 if not ( bottom_tile == TILE_WALL_A ) --[[ and not ( bottom_tile == TILE_DOOR )  ]] then
                     xv = TILE_WALL_B
                 end
+            elseif xv == TILE_SPOT then
+                self.spots = self.spots + 1                
             end
 
             self[y][x] = xv
@@ -77,6 +80,7 @@ function Map:loadMap( id )
 end
 
 function Map:init()
+    self.spots = 0
     self:loadMap( map_id )
 end
 
