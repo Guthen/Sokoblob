@@ -46,12 +46,6 @@ function Cubes:draw()
     end
 end
 
---[[ function Cubes:deleteAll()
-    for i, v in ipairs( self ) do
-        self[i] = nil
-    end
-end ]]
-
 function Cubes:checkWin()
     if #self == 0 then return false end
 
@@ -64,9 +58,3 @@ function Cubes:checkWin()
 
     return confirmed_cubes >= Map.spots
 end
-
---[[ function Cubes:getAt( x, y )
-    for i, v in ipairs( Cubes ) do
-        if v.x == x and v.y == y then return v end
-    end
-end ]]

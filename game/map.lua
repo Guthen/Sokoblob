@@ -11,6 +11,7 @@ enum( "TILE_", {
     WALL_B = 4,
     BUTTON = 5,
     DOOR = 6,
+    DOOR_CLOSE = 7,
 } )
 
 --  > Load maps
@@ -62,8 +63,8 @@ function Map:loadMap( id )
             if xv == TILE_CUBE then
                 Cubes:create( x, y )
                 Map[y][x] = 0
-            elseif xv == TILE_DOOR then 
-                Doors:create( x, y )
+            elseif xv == TILE_DOOR or xv == TILE_DOOR_CLOSE then 
+                Doors:create( x, y ).toggled = xv == TILE_DOOR_CLOSE
                 Map[y][x] = 0
             end
         end

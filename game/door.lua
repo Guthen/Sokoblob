@@ -11,33 +11,21 @@ function Doors:create( x, y )
     door.y = y
     door.toggled = false
 
-    function door:open()
-        door.toggled = true
-    end
-
-    function door:close()
-        door.toggled = false
-    end
-
     Doors[#Doors + 1] = door
     return door
 end
 
-function Doors:triggerDoors( bool )
+function Doors:triggerDoors()
     for i, v in ipairs( self ) do
-        if bool then 
-            v:open()
-        else
-            v:close()
-        end
+        v.toggled = not v.toggled
     end
 end
 
 function Doors:check()
     self.checked_buttons = self.checked_buttons + 1
 
-    if self.checked_buttons > 0 then
-        self:triggerDoors( true )
+    if self.checked_buttons == 1 then
+        self:triggerDoors()
     end
 end
 
@@ -45,7 +33,7 @@ function Doors:uncheck()
     self.checked_buttons = self.checked_buttons - 1
 
     if self.checked_buttons == 0 then
-        self:triggerDoors( false )
+        self:triggerDoors()
     end
 end
 
