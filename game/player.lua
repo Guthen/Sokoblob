@@ -1,8 +1,9 @@
 Player = Entity()
 Player.image = love.graphics.newImage( "images/blob.png" )
+Player.z_index = 5
 
 --  > Create animations quads
-local quads, tile_size = {}, 16
+local quads = {}
 for x = 0, Player.image:getWidth() - tile_size, tile_size do
     quads[#quads + 1] = love.graphics.newQuad( x, 0, tile_size, tile_size, Player.image:getDimensions() )
 end
@@ -33,58 +34,70 @@ end
 --  > Movement
 function Player:keypress( key )
     if key == "z" and not Map:checkCollision( self.x, self.y - 1 ) then
-        local cube = Cubes:getAtPosition( self.x, self.y - 1 )
+        local cube = Cubes:getAt( self.x, self.y - 1 )
         if cube then
-            --  > Collision with cubes
-            if Map:checkCollision( cube.x, cube.y - 1 ) or Cubes:getAtPosition( cube.x, cube.y - 1 ) then
-                return
-            end
+            --  > Collision with cubes 
+            if Map:checkCollision( cube.x, cube.y - 1 ) or Cubes:getAt( cube.x, cube.y - 1 ) then return end
+
+            --  > Collision with closed doors
+            if Doors:getClosedDoorAt( cube.x, cube.y - 1 ) then return end
 
             --  > Move cube
             cube:move( 0, -1 )
         end
 
+        if Doors:getClosedDoorAt( self.x, self.y - 1 ) then return end
+
         self.y = self.y - 1
         self.moves = self.moves + 1
     elseif key == "s" and not Map:checkCollision( self.x, self.y + 1 ) then
-        local cube = Cubes:getAtPosition( self.x, self.y + 1 )
+        local cube = Cubes:getAt( self.x, self.y + 1 )
         if cube then
             --  > Collision with cubes
-            if Map:checkCollision( cube.x, cube.y + 1 ) or Cubes:getAtPosition( cube.x, cube.y + 1 )  then
-                return
-            end
+            if Map:checkCollision( cube.x, cube.y + 1 ) or Cubes:getAt( cube.x, cube.y + 1 ) then return end
+
+            --  > Collision with closed doors
+            if Doors:getClosedDoorAt( cube.x, cube.y + 1 ) then return end
 
             --  > Move cube
             cube:move( 0, 1 )
         end
 
+        if Doors:getClosedDoorAt( self.x, self.y + 1 ) then return end
+
         self.y = self.y + 1
         self.moves = self.moves + 1
     elseif key == "q" and not Map:checkCollision( self.x - 1, self.y ) then
-        local cube = Cubes:getAtPosition( self.x - 1, self.y )
+        local cube = Cubes:getAt( self.x - 1, self.y )
         if cube then
             --  > Collision with cubes
-            if Map:checkCollision( cube.x - 1, cube.y ) or Cubes:getAtPosition( cube.x - 1, cube.y ) then
-                return
-            end
+            if Map:checkCollision( cube.x - 1, cube.y ) or Cubes:getAt( cube.x - 1, cube.y ) then return end
+
+            --  > Collision with closed doors
+            if Doors:getClosedDoorAt( cube.x - 1, cube.y ) then return end
 
             --  > Move cube
             cube:move( -1, 0 )
         end
 
+        if Doors:getClosedDoorAt( self.x - 1, self.y ) then return end
+
         self.x = self.x - 1
         self.moves = self.moves + 1
     elseif key == "d" and not Map:checkCollision( self.x + 1, self.y ) then
-        local cube = Cubes:getAtPosition( self.x + 1, self.y )
+        local cube = Cubes:getAt( self.x + 1, self.y )
         if cube then
             --  > Collision with cubes
-            if Map:checkCollision( cube.x + 1, cube.y ) or Cubes:getAtPosition( cube.x + 1, cube.y ) then
-                return
-            end
+            if Map:checkCollision( cube.x + 1, cube.y ) or Cubes:getAt( cube.x + 1, cube.y ) then return end
+
+            --  > Collision with closed doors
+            if Doors:getClosedDoorAt( cube.x + 1, cube.y ) then return end
 
             --  > Move cube
             cube:move( 1, 0 )
         end
+
+        if Doors:getClosedDoorAt( self.x + 1, self.y ) then return end
 
         self.x = self.x + 1
         self.moves = self.moves + 1

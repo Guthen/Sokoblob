@@ -1,6 +1,5 @@
-Cubes = Entity( {
-    image = love.graphics.newImage( "images/box.png" )
-} )
+Cubes = Container()
+Cubes.z_index = 5
 
 --  > Create cube
 function Cubes:create( x, y )
@@ -11,10 +10,22 @@ function Cubes:create( x, y )
     cube.anim_y = y
 
     function cube:move( x, y )
+        --  > Uncheck last button
+        if Map:getTileAt( self.x, self.y ) == TILE_BUTTON then
+            Doors:uncheck()
+        end
+
+        --  > Move cube
         self.x = self.x + x
         self.y = self.y + y
 
-        self.confirmed = Map:getTile( self.x, self.y ) == 2
+        --  > Confirmed cube
+        self.confirmed = Map:getTileAt( self.x, self.y ) == TILE_SPOT
+
+        --  > Check next button
+        if Map:getTileAt( self.x, self.y ) == TILE_BUTTON then
+            Doors:check()
+        end
     end
     
     Cubes[#Cubes + 1] = cube
@@ -28,17 +39,18 @@ function Cubes:think( dt )
     end
 end
 
+local image = love.graphics.newImage( "images/box.png" )
 function Cubes:draw()
     for i, v in ipairs( self ) do
-        love.graphics.draw( self.image, v.anim_x * object_size, v.anim_y * object_size, 0, object_size / self.image:getWidth(), object_size / self.image:getHeight() )
+        love.graphics.draw( image, v.anim_x * object_size, v.anim_y * object_size, 0, object_size / image:getWidth(), object_size / image:getHeight() )
     end
 end
 
-function Cubes:deleteAll()
+--[[ function Cubes:deleteAll()
     for i, v in ipairs( self ) do
         self[i] = nil
     end
-end
+end ]]
 
 function Cubes:checkWin()
     if #self == 0 then return false end
@@ -50,8 +62,8 @@ function Cubes:checkWin()
     return true
 end
 
-function Cubes:getAtPosition( x, y )
+--[[ function Cubes:getAt( x, y )
     for i, v in ipairs( Cubes ) do
         if v.x == x and v.y == y then return v end
     end
-end
+end ]]

@@ -1,5 +1,17 @@
 maps = maps or {}
 Map = Entity( {} )
+Cubes.z_index = 2
+
+--  > Tile enums
+enum( "TILE_", {
+    VOID = 0,
+    WALL_A = 1,
+    SPOT = 2,
+    CUBE = 3,
+    WALL_B = 4,
+    BUTTON = 5,
+    DOOR = 6,
+} )
 
 --  > Load maps
 if #maps == 0 then 
@@ -10,7 +22,11 @@ if #maps == 0 then
 end
 
 function Map:loadMap( id )
+    print( "Level: id=" .. id )
+
     local map = maps[id]
+    print( "Level: " .. ( map and "found" or "not found" ) )
+    print( ( "Level: bounds w=%d h=%d" ):format( #map[1], #map ) )
 
     --  > Delete previous map
     for i, v in ipairs( self ) do
@@ -21,13 +37,15 @@ function Map:loadMap( id )
     for y, yv in ipairs( map ) do
         self[y] = {}
         for x, xv in ipairs( yv ) do
-            if xv == 1 then
-                if not map[y + 1] or not ( map[y + 1][x] == 1 ) then
-                    xv = 4
+            if xv == TILE_WALL_A then
+                local bottom_tile = map[y + 1] and map[y + 1][x]
+                if not ( bottom_tile == TILE_WALL_A ) --[[ and not ( bottom_tile == TILE_DOOR )  ]] then
+                    xv = TILE_WALL_B
                 end
             end
 
             self[y][x] = xv
+            --print( ( "Level: set x=%d y=%d to tile=%d (%s)" ):format( x, y, xv, self[y][x] and "success" or "failed" ) )
         end
     end
 
@@ -35,11 +53,14 @@ function Map:loadMap( id )
     Map.w = #Map[1] * object_size
     Map.h = #Map * object_size
 
-    --  > Create cubes
+    --  > Create entities
     for y, yv in ipairs( self ) do
         for x, xv in ipairs( yv ) do
-            if xv == 3 then
+            if xv == TILE_CUBE then
                 Cubes:create( x, y )
+                Map[y][x] = 0
+            elseif xv == TILE_DOOR then 
+                Doors:create( x, y )
                 Map[y][x] = 0
             end
         end
@@ -55,29 +76,29 @@ function Map:loadMap( id )
     Player.y = map.spawn.y
 end
 
---  > Create cubes
 function Map:init()
     self:loadMap( map_id )
 end
 
-function Map:getTile( x, y )
+function Map:getTileAt( x, y )
     return self[y] and self[y][x]
 end
 
 --  > Tile collision
 local collision = {
-    [1] = true,
-    [4] = true,
+    [TILE_WALL_A] = true,
+    [TILE_WALL_B] = true,
 }
 function Map:checkCollision( x, y )
-    return collision[self:getTile( x, y )]
+    return collision[self:getTileAt( x, y )]
 end
 
 --  > Tile images
 local images = {}
-images[1] = love.graphics.newImage( "images/wall_a.png" )
-images[2] = love.graphics.newImage( "images/spot.png" )
-images[4] = love.graphics.newImage( "images/wall_b.png" )
+images[TILE_WALL_A] = love.graphics.newImage( "images/wall_a.png" )
+images[TILE_SPOT] = love.graphics.newImage( "images/spot.png" )
+images[TILE_WALL_B] = love.graphics.newImage( "images/wall_b.png" )
+images[TILE_BUTTON] = love.graphics.newImage( "images/button.png" )
 
 function Map:draw()
     --  > Draw map

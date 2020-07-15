@@ -1,73 +1,51 @@
---  > Entity class
-object_size = 64
-map_id = 1
-local entities = {}
+--  > Variables
+object_size, tile_size = 64, 16
+map_id = 6
 
-Entity = {}
-setmetatable( Entity, {
-    __call = function( self, constructor )
-        local ent = setmetatable( constructor or {
-            x = 0,
-            y = 0,
-            w = object_size,
-            h = object_size,
-            color = { 1, 1, 1 }
-        }, {
-            __index = self
-        } )
-
-        entities[#entities + 1] = ent
-        return ent
-    end,
-} )
-
-function Entity:init() end
-function Entity:think( dt ) end
-function Entity:keypress( key ) end
-function Entity:draw()
-    love.graphics.rectangle( "fill", self.x * self.w, self.y * self.w, self.w, self.h )
-end
-
---  > Util
-function approach( a, b, t )
-    t = math.abs( t )
-
-    if a < b then
-        return math.min( a + t, b )
-    elseif a > b then
-        return math.max( a - t, b )
-    end
-
-    return b
-end
-
---  > Game loop
+--  > Graphics settings
 love.graphics.setDefaultFilter( "nearest" )
 love.graphics.setBackgroundColor( 73 / 255, 170 / 255, 16 / 255 )
-
 love.graphics.setFont( love.graphics.newFont( "fonts/SMB2.ttf" ) )
 
-local function include( path )
-    require( path )
-    package.loaded[path] = nil -- allow reload of the file (used for 'R' key)
+--  > Require all files in specific folder
+local function require_folder( folder )
+    for i, v in ipairs( love.filesystem.getDirectoryItems( folder ) ) do
+        local path = folder .. "/" .. v
+        if love.filesystem.getInfo( path ).type == "directory" then
+            require_folder( path )
+        elseif path:find( "%.lua$" ) then
+            require( path:gsub( "%.lua$", "" ) )
+        end
+    end
+end
+require_folder( "utils" )
+require_folder( "game" )
+
+--  > Game
+Game = {}
+function Game:reload()
+    Doors:deleteAll()
+    Cubes:deleteAll()
+    love.load()
 end
 
-require( "camera" )
+--  > Framework
 function love.load()
-    include( "map" )
-    include( "player" )
-    include( "cube" )
-
     --  > Init entities
-    for i, v in ipairs( entities ) do
+    for i, v in ipairs( Entities ) do
         v:init()
     end
+
+    --  > Sort entities by ZIndex
+    table.sort( Entities, function( a, b )
+        return a.z_index < b.z_index
+    end )
 end
 
 local win = false
 function love.update( dt )
     --  > Think entities
-    for i, v in ipairs( entities ) do
+    for i, v in ipairs( Entities ) do
         v:think( dt )
     end
 
@@ -78,22 +56,20 @@ end
 function love.keypressed( key )
     --  > Reload map
     if key == "r" then
-        entities = {}
-        love.load()
+        print( "Game: retry" )
+        Game:reload()
         return
     end
 
     --  > Next map
     if win then
         map_id = map_id + 1 > #maps and 1 or map_id + 1
-        Cubes:deleteAll()
-        Map:init()
-        Player:init()
+        Game:reload()
         return
     end
 
     --  > Entities hook
-    for i, v in ipairs( entities ) do
+    for i, v in ipairs( Entities ) do
         v:keypress( key )
     end 
 end 
@@ -101,7 +77,7 @@ end
 function love.draw()
     --  > Objects draw
     Camera:push()
-    for i, v in ipairs( entities ) do
+    for i, v in ipairs( Entities ) do
         if v.color then love.graphics.setColor( v.color ) end
         v:draw()
     end
