@@ -1,6 +1,6 @@
 --  > Variables
 object_size, tile_size = 64, 16
-map_id = 6
+map_id = 1
 
 --  > Graphics settings
 love.graphics.setDefaultFilter( "nearest" )

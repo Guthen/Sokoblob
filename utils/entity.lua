@@ -1,20 +1,4 @@
-Entities = {}
-
-Entity = class()
---[[ setmetatable( Entity, {
-    __call = function( self, constructor )
-        local ent = setmetatable( constructor or {
-            x = 0,
-            y = 0,
-            color = { 1, 1, 1 }
-        }, {
-            __index = self
-        } )
-
-        Entities[#Entities + 1] = ent
-        return ent
-    end,
-} ) ]]
+Entity, Entities = class(), {}
 
 function Entity:construct( tbl )
     if not tbl then
