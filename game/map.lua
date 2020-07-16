@@ -18,7 +18,10 @@ enum( "TILE_", {
 if #Maps == 0 then 
     Maps = {}
     for i, v in ipairs( love.filesystem.getDirectoryItems( "Maps" ) ) do
-        Maps[#Maps + 1] = require( "Maps/" .. v:gsub( "%.lua", "" ) )
+        Maps[#Maps + 1] = {
+            level = require( "Maps/" .. v:gsub( "%.lua", "" ) ),
+            filename = v:gsub( "%.lua$", "" ),
+        }
     end
 end
 
@@ -27,6 +30,9 @@ function BaseMap:loadMap( id )
 
     local map = Maps[id]
     print( "Level: " .. ( map and "found" or "not found" ) )
+    if not map then return end
+
+    map = map.level
     print( ( "Level: bounds w=%d h=%d" ):format( #map[1], #map ) )
 
     --  > Delete previous map

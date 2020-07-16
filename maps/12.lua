@@ -21,4 +21,5 @@ return {
     options = {
         scale = .65,
     },
+    high_score = 102,
 }

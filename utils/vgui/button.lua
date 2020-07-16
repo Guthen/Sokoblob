@@ -34,6 +34,16 @@ end
 local hovered_amount = .05
 local old_draw = Button.draw
 function Button:draw()
+    --  > Draw background
+    self:drawBackground()
+
+    --  > Draw text
+    if self.text then
+        self:drawText()
+    end
+end
+
+function Button:drawBackground()
     --  > Get color
     local color = { self.color[1], self.color[2], self.color[3] }
     if self.hovered then
@@ -45,11 +55,14 @@ function Button:draw()
     --  > Draw background
     love.graphics.setColor( color )
     love.graphics.rectangle( "fill", self.x, self.y, self.w, self.h )
+end
 
-    --  > Draw text
-    if self.text then
-        local limit = self.w - self.w * .05
-        love.graphics.setColor( self.text_color )
-        love.graphics.printf( self.text, self.x + self.w - limit, self.y + self.h / 2 - love.graphics.getFont():getHeight() / 2, limit, "center" )
-    end
+function Button:drawText( text, off_x, off_y )
+    text = text or self.text
+    off_x = off_x or 0
+    off_y = off_y or self.h / 2
+
+    local limit = self.w - self.w * .05
+    love.graphics.setColor( self.text_color )
+    love.graphics.printf( text, self.x + off_x + self.w - limit, self.y + off_y - love.graphics.getFont():getHeight() / 2, limit, "center" )
 end

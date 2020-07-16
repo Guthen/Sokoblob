@@ -10,5 +10,6 @@ return {
     spawn = {
         x = 5,
         y = 2,
-    }
+    },
+    high_score = 20,
 }

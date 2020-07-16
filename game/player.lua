@@ -94,9 +94,9 @@ function BasePlayer:draw()
     love.graphics.origin()
 
     --  > Moves
-    love.graphics.printf( self.moves .. " moves", love.graphics.getWidth() / 2 - limit / 2, 60, limit, "center" )
+    love.graphics.printf( self.moves .. " moves", love.graphics.getWidth() / 2 - limit / 2, 20, limit, "center" )
     --  > Keys
-    love.graphics.printf( "Move with 'Z', 'Q', 'S', 'D'\nRetry with 'R'", 20, love.graphics.getHeight() - 45, limit )
+    love.graphics.printf( "Move with 'Z', 'Q', 'S', 'D'\nRetry with 'R'\nGo to menu with 'Escape'", 20, love.graphics.getHeight() - 65, limit )
     
     love.graphics.pop()
 end
