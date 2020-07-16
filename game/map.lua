@@ -119,6 +119,7 @@ function BaseMap:draw()
             local image = images[xv]
             if image then
                 love.graphics.draw( image, x * object_size, y * object_size, 0, object_size / image:getWidth(), object_size / image:getHeight() )
+            end
         end
     end
 end
