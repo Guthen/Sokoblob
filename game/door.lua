@@ -19,6 +19,8 @@ function BaseDoors:triggerDoors()
     for i, v in ipairs( self ) do
         v.toggled = not v.toggled
     end
+
+    Game:playSound( "door_switch.wav" )
 end
 
 function BaseDoors:check()

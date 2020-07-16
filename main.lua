@@ -37,8 +37,12 @@ function Game:setScene( scene )
     self.ActiveScene = scene
     love.load()
 end
---[[ Game:setScene( GameScene )
-Game:setScene( MenuScene ) ]]
+
+function Game:playSound( filename )
+    local sound = love.audio.newSource( "sounds/" .. filename, "static" )
+    sound:setVolume( .5 )
+    sound:play()
+end
 
 --  > Framework
 function love.load()
