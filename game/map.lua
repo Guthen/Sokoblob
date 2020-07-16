@@ -17,13 +17,14 @@ enum( "TILE_", {
 --  > Load Maps
 if #Maps == 0 then 
     Maps = {}
-    for i, v in ipairs( love.filesystem.getDirectoryItems( "Maps" ) ) do
+    for i, v in ipairs( love.filesystem.getDirectoryItems( "maps" ) ) do
         Maps[#Maps + 1] = {
             level = require( "Maps/" .. v:gsub( "%.lua", "" ) ),
             filename = v:gsub( "%.lua$", "" ),
         }
     end
 end
+print( ( "Maps: load %d maps" ):format( #Maps ) )
 
 function BaseMap:loadMap( id )
     print( "Level: id=" .. id )
@@ -118,9 +119,9 @@ function BaseMap:draw()
             local image = images[xv]
             if image then
                 love.graphics.draw( image, x * object_size, y * object_size, 0, object_size / image:getWidth(), object_size / image:getHeight() )
-            end 
         end
     end
+end
 
     love.graphics.push()
     love.graphics.origin()
