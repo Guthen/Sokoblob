@@ -28,9 +28,8 @@ end
 
 function InputButton:mousepress( x, y, mouse_button )
     if not ( mouse_button == 1 ) then return end
-    local mouse_x, mouse_y = love.mouse.getPosition()
 
-    if collide( { x = mouse_x, y = mouse_y, w = 1, h = 1 }, self ) then
+    if collide( { x = x, y = y, w = 1, h = 1 }, self ) then
         Game.ActiveScene:keypressed( self.key )
     end
 end
