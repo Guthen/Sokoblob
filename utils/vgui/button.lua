@@ -1,12 +1,14 @@
-Button = class( BasePanel )
+require( "utils/vgui/label" )
+
+Button = class( Label )
 Button.text_color = { 0, 0, 0 }
+Button.text_align = "center"
 
-function Button:construct( x, y, text )
-    Button.super.construct( self )
+function Button:construct( text, x, y )
+    self.super.construct( self, text, x, y )
 
-    self.x = x or 0
-    self.y = y or 0
-    self.text = text or "Text"
+    self.w = self.w + 10
+    self.h = self.h + 10
 end
 
 function Button:mousepress( x, y, mouse_button )
@@ -31,9 +33,9 @@ end
 function Button:onClick( x, y )
 end
 
-local hovered_amount = .05
+local hovered_amount = .1
 local old_draw = Button.draw
-function Button:draw()
+function Button:paint()
     --  > Draw background
     self:drawBackground()
 
@@ -55,14 +57,4 @@ function Button:drawBackground()
     --  > Draw background
     love.graphics.setColor( color )
     love.graphics.rectangle( "fill", self.x, self.y, self.w, self.h )
-end
-
-function Button:drawText( text, off_x, off_y )
-    text = text or self.text
-    off_x = off_x or 0
-    off_y = off_y or self.h / 2
-
-    local limit = self.w - self.w * .05
-    love.graphics.setColor( self.text_color )
-    love.graphics.printf( text, self.x + off_x + self.w - limit, self.y + off_y - love.graphics.getFont():getHeight() / 2, limit, "center" )
 end
