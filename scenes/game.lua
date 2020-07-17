@@ -8,16 +8,51 @@ function GameScene:load()
     Doors = BaseDoors()
     Cubes = BaseCubes()
 
+    if love.system.getOS() == "Android" then
+        InputButton( 20, 40, "escape", 5 )
+        InputButton( love.graphics.getWidth() - button_size - 20, 40, "r", 6 )
+    end
+
     Entities:call( "init" )
     Entities:sort()
 end
 
-local win = false
+local win, vibrated = false, false
 function GameScene:update( dt )
     Entities:call( "think", dt )
 
     --  > Get game win
     win = Cubes:checkWin()
+
+    if win and not vibrated then
+        vibrated = true
+
+        love.system.vibrate( 0.2 )
+    end
+end
+
+local function next_map()
+    local map_name = Maps[map_id].filename
+    local last_score = Game.Scores[map_name]
+    if not last_score or last_score > Player.moves then
+        Game:setScore( map_name, Player.moves )
+    end
+
+    --  > Next map
+    map_id = map_id + 1 > #Maps and 1 or map_id + 1
+    Entities:clear()
+    Game:reload()
+end
+
+function GameScene:mousepressed( x, y, mouse_button )
+    --  > Score and next map
+    if win then
+        --  > Score
+        next_map()
+        return
+    end
+
+    Entities:call( "mousepress", x, y, mouse_button )
 end
 
 function GameScene:keypressed( key )
@@ -38,16 +73,7 @@ function GameScene:keypressed( key )
     --  > Score and next map
     if win then
         --  > Score
-        local map_name = Maps[map_id].filename
-        local last_score = Game.Scores[map_name]
-        if not last_score or last_score > Player.moves then
-            Game:setScore( map_name, Player.moves )
-        end
-
-        --  > Next map
-        map_id = map_id + 1 > #Maps and 1 or map_id + 1
-        Entities:clear()
-        Game:reload()
+        next_map()
         return
     end
 
@@ -69,20 +95,20 @@ function GameScene:draw()
         love.graphics.setColor( 1, 1, 1 )
         love.graphics.printf( "You won!\nMove to get to the next map and save your score", love.graphics.getWidth() / 2 - limit / 2, love.graphics.getHeight() * .15, limit, "center" )
 
+        --  > Stars score
+        local score_stars = Game:getScoreStars( Game:getHighscore( map_id, true ), Player.moves )
+        local scale, stars = love.system.getOS() == "Android" and 3 or 4, 3
+        local off_x = ( love.graphics.getWidth() - stars * image_star:getWidth() * scale ) / 2
+        for i = 0, stars - 1 do
+            love.graphics.setColor( score_stars > i and unlock_star_color or lock_star_color )
+            love.graphics.draw( image_star, off_x + i * image_star:getWidth() * scale, love.graphics.getHeight() * .22, 0, scale, scale )
+        end
+
         --  > Better score than the creator one
         if Player.moves < ( Maps[map_id].level.high_score or - 1 ) then
             local limit, r, g, b = 500, hsl( ( love.timer.getTime() * 250 ) % 360, 200, 100 )
             love.graphics.setColor( r / 255, g / 255, b / 255 )
-            love.graphics.printf( "You beat the creator's highscore!\nYou're a fookin legend!", love.graphics.getWidth() / 2, love.graphics.getHeight() * .35, limit, "center", math.cos( love.timer.getTime() * 3 ) / 10, 1, 1, limit / 2 )
-        end
-
-        --  > Stars score
-        local score_stars = Game:getScoreStars( Game:getHighscore( map_id, true ), Player.moves )
-        local scale, stars = 4, 3
-        local off_x = ( love.graphics.getWidth() - stars * image_star:getWidth() * scale ) / 2
-        for i = 0, stars - 1 do
-            love.graphics.setColor( score_stars > i and unlock_star_color or lock_star_color )
-            love.graphics.draw( image_star, off_x + i * image_star:getWidth() * scale, love.graphics.getHeight() * .2, 0, scale, scale )
+            love.graphics.printf( "You beat the creator's highscore!\nYou're a fookin legend!", love.graphics.getWidth() / 2, love.graphics.getHeight() * .22 + image_star:getWidth() * scale + 10, limit, "center", math.cos( love.timer.getTime() * 3 ) / 10, 1, 1, limit / 2 )
         end
 
         --  > Game end message

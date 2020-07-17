@@ -12,8 +12,12 @@ end
 function Button:mousepress( x, y, mouse_button )
     if not ( mouse_button == 1 ) then return end
 
-    if self.hovered then
+    if love.system.getOS() == "Android" then
         self:onClick( x - self.x, y - self.y )
+    else
+        if self.hovered then
+            self:onClick( x - self.x, y - self.y )
+        end
     end
 end
 
@@ -23,6 +27,8 @@ local function collide( a, b )
 end
 
 function Button:think( dt )
+    if love.system.getOS() == "Android" then return end -- Avoid useless calculs
+    
     local mouse_x, mouse_y = love.mouse.getPosition()
 
     self.hovered = collide( { x = mouse_x, y = mouse_y, w = 1, h = 1 }, self )
@@ -33,7 +39,7 @@ end
 
 local hovered_amount = .05
 local old_draw = Button.draw
-function Button:draw()
+function Button:paint()
     --  > Draw background
     self:drawBackground()
 

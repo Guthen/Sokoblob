@@ -123,7 +123,6 @@ function BaseMap:draw()
         end
     end
 
-
     love.graphics.push()
     love.graphics.origin()
     
