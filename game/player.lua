@@ -16,11 +16,12 @@ function BasePlayer:init()
     self.anim_x = self.x
     self.anim_y = self.y
 
-    if love.system.getOS() == "Android" then
-        InputButton( button_size + 25, love.graphics.getHeight() - button_size * 2 - 25, "z", 2 )
-        InputButton( 20, love.graphics.getHeight() - button_size - 20, "q", 3 )
-        InputButton( button_size + 25, love.graphics.getHeight() - button_size - 20, "s", 4 )
-        InputButton( button_size * 2 + 30, love.graphics.getHeight() - button_size - 20, "d", 1 )
+    if not Game.IsPC then
+        local offset, space = love.graphics.getHeight() * .02, 5
+        InputButton( button_size + offset + space, love.graphics.getHeight() - button_size * 2 - ( offset + space ), "z", 2 )
+        InputButton( offset, love.graphics.getHeight() - button_size - offset, "q", 3 )
+        InputButton( button_size + offset + space, love.graphics.getHeight() - button_size - offset, "s", 4 )
+        InputButton( button_size * 2 + ( offset + space * 2 ), love.graphics.getHeight() - button_size - offset, "d", 1 )
     end
 end
 
@@ -96,15 +97,16 @@ end
 function BasePlayer:draw()
     love.graphics.draw( self.image, self.quads[self.current_quad], self.anim_x * object_size, self.anim_y * object_size, 0, object_size / tile_size, object_size / tile_size )
 
-    local limit = 400
     love.graphics.push()
     love.graphics.origin()
-
+    
     --  > Moves
-    love.graphics.printf( self.moves .. " moves", love.graphics.getWidth() / 2 - limit / 2, 20, limit, "center" )
+    local limit = love.graphics.getWidth() * .5
+    love.graphics.printf( self.moves .. " moves", love.graphics.getWidth() / 2 - limit / 2, love.graphics.getHeight() * .02, limit, "center" )
+    
     --  > Keys
-    if love.system.getOS() ~= "Android" then
-        love.graphics.printf( "Move with 'Z', 'Q', 'S', 'D'\nRetry with 'R'\nGo to menu with 'Escape'", 20, love.graphics.getHeight() - 65, limit )
+    if Game.IsPC then
+        love.graphics.printf( "Move with 'Z', 'Q', 'S', 'D'\nRetry with 'R'\nGo to menu with 'Escape'", 20, love.graphics.getHeight() * .9, limit )
     end
     
     love.graphics.pop()

@@ -224,7 +224,6 @@ function MapEditorScene:mousepressed( x, y, button )
     if button == 2 then
         if Map[tile_y] then 
             Map[tile_y][tile_x] = 0
-            --if #Map[tile_y] == 0 then table.remove( Map, tile_y ) end
             Map:computeSize()
         end
     end
@@ -252,7 +251,6 @@ function MapEditorScene:draw()
 
     --  > Draw current tile
     love.graphics.setColor( 1, 1, 1, .75 )
-    --love.graphics.translate( ( love.graphics.getWidth() - Map.w ) / 2, ( love.graphics.getHeight() - Map.h ) / 2 )
     love.graphics.translate( -Camera.x, -Camera.y )
 
     local mouse_x, mouse_y = love.mouse.getPosition()
@@ -275,5 +273,5 @@ function MapEditorScene:draw()
 
     local limit = 600
     love.graphics.setColor( 1, 1, 1 )
-    love.graphics.printf( "Move with 'Z', 'Q', 'S', 'D'\nPlace tile with LMB\nRemove tile with RMB\nGo to menu with 'Escape'", 20, love.graphics.getHeight() - 80, limit )
+    love.graphics.printf( "Move with 'Z', 'Q', 'S', 'D'\nPlace tile with LMB\nRemove tile with RMB\nGo to menu with 'Escape'", 20, love.graphics.getHeight() * .87, limit )
 end

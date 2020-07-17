@@ -1,10 +1,25 @@
+local pc_os = {
+    ["Windows"] = true,
+    ["OS X"] = true,
+    ["Linux"] = true,
+}
+
+Game = {
+    Scores = {},
+    IsPC = pc_os[love.system.getOS()],
+}
+if not Game.IsPC then
+    love.window.setFullscreen( true )
+end
+
 --  > Variables
-object_size, tile_size, button_size = 64, 16, 48
+local w, h = love.graphics.getDimensions()
+object_size, tile_size, button_size = w * .025 + h * .044, 16, w * .05 + h * .05
 map_id = 1
 
 --  > Graphics settings
 love.graphics.setDefaultFilter( "nearest" )
-love.graphics.setFont( love.graphics.newFont( "fonts/SMB2.ttf" ) )
+love.graphics.setFont( love.graphics.newFont( "fonts/SMB2.ttf", w * .01 + h * .0075 ) )
 love.graphics.setBackgroundColor( 73 / 255, 170 / 255, 16 / 255 )
 
 --  > Require all files in specific folder
@@ -23,10 +38,7 @@ require_folder( "scenes" )
 require_folder( "game" )
 
 --  > Game
-Game = {
-    ActiveScene = MenuScene,
-    Scores = {},
-}
+Game.ActiveScene = MenuScene
 
 function Game:reload()
     Doors:deleteAll()
@@ -113,9 +125,6 @@ end
 
 --  > Framework
 function love.load()
-    if love.system.getOS() == "Android" then
-        love.window.setFullscreen( true )
-    end
     --  > Scene
     Game.ActiveScene:load()
 end
@@ -136,10 +145,10 @@ end
 
 function love.draw()
     --  > Scene
-    Game.ActiveScene:draw()
+    Game.ActiveScene:draw( love.graphics.getDimensions() )
 
     --  > FPS
-    local limit = 200
+    local limit, text = w * .25, "FPS " .. love.timer.getFPS()
     love.graphics.setColor( 1, 1, 1 )
-    love.graphics.printf( "FPS " .. love.timer.getFPS(), love.graphics.getWidth() - limit / 2, 20, limit )
+    love.graphics.printf( text, love.graphics.getWidth() - limit - h * .02, h * .02, limit, "right" )
 end 
