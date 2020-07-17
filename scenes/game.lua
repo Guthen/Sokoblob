@@ -116,18 +116,18 @@ function GameScene:draw( w, h )
 
         --  > Better score than the creator one
         if Player.moves < ( Maps[map_id].level.high_score or - 1 ) then
-            local limit, r, g, b = 500, hsl( ( love.timer.getTime() * 250 ) % 360, 200, 100 )
+            local limit, r, g, b = w * .5, hsl( ( love.timer.getTime() * 250 ) % 360, 200, 100 )
             love.graphics.setColor( r / 255, g / 255, b / 255 )
-            love.graphics.printf( "You beat the creator's highscore!\nYou're a fookin legend!", w / 2, h * .22 + image_star:getWidth() * scale + 10, limit, "center", math.cos( love.timer.getTime() * 3 ) / 10, 1, 1, limit / 2 )
+            love.graphics.printf( "You beat the creator's highscore!\nYou're a fookin legend!", w / 2, h * .2 + image_star:getHeight() * scale / 2 - love.graphics.getFont():getHeight() / 2, limit, "center", math.cos( love.timer.getTime() * 3 ) / 10, 1, 1, limit / 2 )
         end
 
         --  > Game end message
         if map_id == #Maps then
-            local limit, scale = 600, 1.25
+            local limit, scale = w * .6, 1.25
             love.graphics.setColor( 1, 1, 1 )
             love.graphics.printf( "Congratulations, you finished the game!", w / 2 - limit * scale / 2, h / 2, limit, "center", 0, scale, scale )
             scale = .85
-            love.graphics.printf( "It wasn't hard, right?", w / 2 - limit * scale / 2, h / 2 + 20, limit, "center", 0, scale, scale )
+            love.graphics.printf( "It wasn't hard, right?", w / 2 - limit * scale / 2, h / 2 + h * .05, limit, "center", 0, scale, scale )
         end
     end
 end
