@@ -11,22 +11,29 @@ function Button:construct( text, x, y )
     self.h = self.h + 10
 end
 
-function Button:mousepress( x, y, mouse_button )
-    if not ( mouse_button == 1 ) then return end
-
-    if self.hovered then
-        self:onClick( x - self.x, y - self.y )
-    end
-end
-
 local function collide( a, b )
     return a.x < b.x + b.w and b.x < a.x + a.w 
        and a.y < b.y + b.h and b.y < a.y + a.h
 end
 
-function Button:think( dt )
-    local mouse_x, mouse_y = love.mouse.getPosition()
+function Button:mousepress( x, y, mouse_button )
+    if not ( mouse_button == 1 ) then return end
 
+    if love.system.getOS() == "Android" then
+        if collide( { x = x, y = y, w = 1, h = 1 }, self ) then
+            self:onClick( x - self.x, y - self.y )
+        end
+    else
+        if self.hovered then
+            self:onClick( x - self.x, y - self.y )
+        end
+    end
+end
+
+function Button:think( dt )
+    if love.system.getOS() == "Android" then return end -- Avoid useless calculs
+    
+    local mouse_x, mouse_y = love.mouse.getPosition()
     self.hovered = collide( { x = mouse_x, y = mouse_y, w = 1, h = 1 }, self )
 end
 

@@ -1,5 +1,5 @@
 --  > Variables
-object_size, tile_size = 64, 16
+object_size, tile_size, button_size = 64, 16, 48
 map_id = 1
 
 --  > Graphics settings
@@ -113,6 +113,9 @@ end
 
 --  > Framework
 function love.load()
+    if love.system.getOS() == "Android" then
+        love.window.setFullscreen( true )
+    end
     --  > Scene
     Game.ActiveScene:load()
 end

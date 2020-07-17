@@ -15,6 +15,13 @@ function BasePlayer:init()
     self.moves = 0
     self.anim_x = self.x
     self.anim_y = self.y
+
+    if love.system.getOS() == "Android" then
+        InputButton( button_size + 25, love.graphics.getHeight() - button_size * 2 - 25, "z", 2 )
+        InputButton( 20, love.graphics.getHeight() - button_size - 20, "q", 3 )
+        InputButton( button_size + 25, love.graphics.getHeight() - button_size - 20, "s", 4 )
+        InputButton( button_size * 2 + 30, love.graphics.getHeight() - button_size - 20, "d", 1 )
+    end
 end
 
 local time, next_frame_time = 0, .5
@@ -96,7 +103,9 @@ function BasePlayer:draw()
     --  > Moves
     love.graphics.printf( self.moves .. " moves", love.graphics.getWidth() / 2 - limit / 2, 20, limit, "center" )
     --  > Keys
-    love.graphics.printf( "Move with 'Z', 'Q', 'S', 'D'\nRetry with 'R'\nGo to menu with 'Escape'", 20, love.graphics.getHeight() - 65, limit )
+    if love.system.getOS() ~= "Android" then
+        love.graphics.printf( "Move with 'Z', 'Q', 'S', 'D'\nRetry with 'R'\nGo to menu with 'Escape'", 20, love.graphics.getHeight() - 65, limit )
+    end
     
     love.graphics.pop()
 end
