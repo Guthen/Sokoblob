@@ -235,7 +235,7 @@ function MapEditorScene:mousepressed( x, y, button )
 
     --  > Get tile position
     local tile_x, tile_y = math.floor( mouse_x / object_size ) + 1, math.floor( mouse_y / object_size ) + 1
-    if tile_x <= 0 or tile_y <= 0 then return end
+    if tile_x <= 0 or tile_y <= 0 or tile_x > Map.w / object_size or tile_y > Map.h / object_size then return end
 
     --  > Place tile
     if button == 1 then
@@ -250,6 +250,17 @@ function MapEditorScene:mousepressed( x, y, button )
         if Map[tile_y] then 
             Map[tile_y][tile_x] = 0
             Map:computeSize()
+        end
+    end
+
+    --  > Copy tile
+    if button == 3 then
+        local tile = Map[tile_y][tile_x]
+        for i, v in ipairs( self.tiles ) do
+            if v == tile then
+                self.tile_id = i
+                break
+            end
         end
     end
 end
@@ -298,5 +309,5 @@ function MapEditorScene:draw()
 
     local limit = 600
     love.graphics.setColor( 1, 1, 1 )
-    love.graphics.printf( "Move with 'Z', 'Q', 'S', 'D'\nPlace tile with LMB\nRemove tile with RMB\nGo to menu with 'Escape'", 20, love.graphics.getHeight() * .87, limit )
+    love.graphics.printf( "Move with 'Z', 'Q', 'S', 'D'\nPlace tile with LMB\nRemove tile with RMB\nCopy tile with MMB\nGo to menu with 'Escape'", 20, love.graphics.getHeight() * .84, limit )
 end
