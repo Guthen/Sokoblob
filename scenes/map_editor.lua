@@ -157,7 +157,7 @@ function MapEditorScene:load()
             lua = lua .. "},\n"
         end
 
-        lua = lua .. ( "\thigh_score = %d," ):format( self.highscore )
+        lua = lua .. ( "\thigh_score = %d,\n" ):format( self.highscore )
         lua = lua .. "}"
 
         --  > Write
