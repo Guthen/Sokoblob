@@ -17,9 +17,6 @@ function MapEditorScene:createEditableNumber( name, x, y, value, callback )
     function minus_button.onClick()
         self[key] = self[key] - 1
         callback( self[key], "-" )
-
-        value_label.text = self[key]
-        value_label:fitToText()
     end
     
     local text_label = Label( name, x + minus_button.w + 5, y )
@@ -29,6 +26,14 @@ function MapEditorScene:createEditableNumber( name, x, y, value, callback )
     value_label.text_align = "center"
     value_label.x = value_label.x - value_label.w / 2
     value_label.y = value_label.y + value_label.h * 1.5 + 2.5
+    function value_label.think()
+        local old_text = value_label.text
+        value_label.text = self[key]
+
+        if not ( old_text == value_label.text ) then
+            value_label:fitToText()
+        end
+    end
 
     local plus_button = Button( "+", x + minus_button.w + 5 * 2 + text_label.w, y )
     plus_button.w = size
@@ -36,9 +41,6 @@ function MapEditorScene:createEditableNumber( name, x, y, value, callback )
     function plus_button.onClick()
         self[key] = self[key] + 1
         callback( self[key], "+" )
-
-        value_label.text = self[key]
-        value_label:fitToText()
     end
 
     return minus_button.y, minus_button.h
@@ -96,6 +98,7 @@ function MapEditorScene:load()
         end
 
         Map:computeSize()
+        self.map_width = Map.w / object_size
     end )
     y, h = self:createEditableNumber( "Map Height", offset, offset + y + h, Map.h / object_size, function( value, op )
         if op == "+" then
@@ -111,6 +114,7 @@ function MapEditorScene:load()
         end
 
         Map:computeSize()
+        self.map_height = Map.h / object_size
     end )
     y, h = self:createEditableNumber( "Tile ID", offset, offset + y + h, self.tile_id, function( value, op ) 
         if op == "+" then
@@ -119,30 +123,46 @@ function MapEditorScene:load()
             self.tile_id = value < 1 and #self.tiles or value
         end
     end )
+    
+    --  > Highscore
+    y, h = self:createEditableNumber( "Highscore", offset, offset + y + h, 0, function( value, op ) end )
 
     --  > Save button
     local save_button = Button( "Save", offset, offset + y + h )
-    function save_button.onClick( self, filename )
+    function save_button.onClick( _, filename )
         filename = type( filename ) == "string" and filename or nil
 
         --  > Parse table to Lua code
-        local lua = "return {\n"
+        local shortcuts = {
+            [TILE_PLAYER] = "P",
+            [TILE_WALL_A] = "W",
+            [TILE_VOID] = "_",
+            [TILE_BUTTON] = "B",
+            [TILE_DOOR] = "D",
+            [TILE_DOOR_CLOSE] = "DC",
+            [TILE_CUBE] = "C",
+            [TILE_SPOT] = "S",
+        }
+
+        local lua = "local P, W, _, B, D, DC, C, S = TILE_PLAYER, TILE_WALL_A, TILE_VOID, TILE_BUTTON, TILE_DOOR, TILE_DOOR_CLOSE, TILE_CUBE, TILE_SPOT\n\n"
+        lua = lua .. "return {\n"
 
         for y, yv in ipairs( Map ) do
             lua = lua .. "\t{ "
 
             for x, xv in ipairs( yv ) do
-                lua = lua .. ( "%d, " ):format( xv )
+                lua = lua .. ( "%s, " ):format( shortcuts[xv] or xv )
             end
 
             lua = lua .. "},\n"
         end
 
+        lua = lua .. ( "\thigh_score = %d," ):format( self.highscore )
         lua = lua .. "}"
 
         --  > Write
         love.filesystem.createDirectory( "maps" )
-        print( love.filesystem.write( "maps/" .. ( filename or os.date( "%d_%m_%Y-%H_%M_%S" ) ) .. ".lua", lua ) )
+        print( "Map Editor: saved:", love.filesystem.write( "maps/" .. ( filename or os.date( "xyz_%d_%m_%Y-%H_%M_%S" ) ) .. ".lua", lua ) )
     end
 
     --  > Clear button
@@ -167,6 +187,11 @@ function MapEditorScene:load()
     local load_button = Button( "Load", offset, offset + y + h )
     function load_button.onClick()
         Map:loadMap( Maps[self.map_id], true )
+
+        self.map_width = Map.w / object_size
+        self.map_height = Map.h / object_size
+
+        self.highscore = Game:getHighscore( self.map_id, true )
     end
 
     local overwrite_button = Button( "Overwrite", load_button.x + offset + load_button.w, load_button.y )
