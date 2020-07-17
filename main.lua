@@ -5,6 +5,7 @@ map_id = 1
 --  > Graphics settings
 love.graphics.setDefaultFilter( "nearest" )
 love.graphics.setFont( love.graphics.newFont( "fonts/SMB2.ttf" ) )
+love.graphics.setBackgroundColor( 73 / 255, 170 / 255, 16 / 255 )
 
 --  > Require all files in specific folder
 local function require_folder( folder )
@@ -39,7 +40,7 @@ function Game:loadScores()
 
     local i = 1
     for l in love.filesystem.lines( score_filename ) do
-        local map_name, score = l:match( "(%w+)%:%s?(%d+)" )
+        local map_name, score = l:match( "([%w-_]+)%:%s?(%d+)" )
         if not map_name or not score then 
             print( "Scores: failed to read line " .. i ) 
         else

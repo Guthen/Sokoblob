@@ -44,13 +44,13 @@ function BaseDoors:getClosedDoorAt( x, y )
     return door and not door.toggled
 end
 
-local image, quads = love.graphics.newImage( "images/door.png" ), {}
-for x = 0, image:getWidth() - tile_size, tile_size do
-    quads[#quads + 1] = love.graphics.newQuad( x, 0, tile_size, tile_size, image:getDimensions() )
+BaseDoors.image, BaseDoors.quads = love.graphics.newImage( "images/door.png" ), {}
+for x = 0, BaseDoors.image:getWidth() - tile_size, tile_size do
+    BaseDoors.quads[#BaseDoors.quads + 1] = love.graphics.newQuad( x, 0, tile_size, tile_size, BaseDoors.image:getDimensions() )
 end
 
 function BaseDoors:draw()
     for i, v in ipairs( self ) do
-        love.graphics.draw( image, quads[v.toggled and 2 or 1], v.x * object_size, v.y * object_size, 0, object_size / tile_size, object_size / tile_size )
+        love.graphics.draw( self.image, self.quads[v.toggled and 2 or 1], v.x * object_size, v.y * object_size, 0, object_size / tile_size, object_size / tile_size )
     end
 end

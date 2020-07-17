@@ -1,5 +1,6 @@
 BaseCubes = class( Container )
 BaseCubes.z_index = 1
+BaseCubes.image = love.graphics.newImage( "images/box.png" )
 
 --  > Create cube
 function BaseCubes:create( x, y )
@@ -42,10 +43,9 @@ function BaseCubes:think( dt )
     end
 end
 
-local image = love.graphics.newImage( "images/box.png" )
 function BaseCubes:draw()
     for i, v in ipairs( self ) do
-        love.graphics.draw( image, v.anim_x * object_size, v.anim_y * object_size, 0, object_size / image:getWidth(), object_size / image:getHeight() )
+        love.graphics.draw( self.image, v.anim_x * object_size, v.anim_y * object_size, 0, object_size / self.image:getWidth(), object_size / self.image:getHeight() )
     end
 end
 

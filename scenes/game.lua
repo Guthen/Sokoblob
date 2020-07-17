@@ -1,14 +1,20 @@
 GameScene = Scene()
 
 function GameScene:load()
-    love.graphics.setBackgroundColor( 73 / 255, 170 / 255, 16 / 255 )
-
-    Map = BaseMap( {} )
+    --  > Create entities
+    Map = BaseMap()
     Player = BasePlayer()
     Doors = BaseDoors()
     Cubes = BaseCubes()
 
-    Entities:call( "init" )
+    --  > Init
+    Map:init()
+    Map:loadMap( map_id )
+    Player:init()
+    Doors:init()
+    Cubes:init()
+
+    --  > Sort
     Entities:sort()
 end
 
@@ -63,11 +69,14 @@ function GameScene:draw()
     Entities:call( "draw" )
     Camera:pop()
 
+    --  > Level
+    love.graphics.print( "Level " .. map_id, 20, 20 )
+
     --  > Win message
     if win then
-        local limit = 600
+        local limit = 650
         love.graphics.setColor( 1, 1, 1 )
-        love.graphics.printf( "You won!\nMove to get to the next map and save your score", love.graphics.getWidth() / 2 - limit / 2, love.graphics.getHeight() * .15, limit, "center" )
+        love.graphics.printf( "You won!\nMove to get to the next map and save your highscore", love.graphics.getWidth() / 2 - limit / 2, love.graphics.getHeight() * .15, limit, "center" )
 
         --  > Better score than the creator one
         if Player.moves < ( Maps[map_id].level.high_score or - 1 ) then

@@ -1,10 +1,8 @@
 MenuScene = Scene()
 
 local image_star = love.graphics.newImage( "images/star.png" )
-local lock_map_color, unlock_star_color, lock_star_color = { .85, .85, .85 }, { 0, 0, 0 }, { .75, .75, .75 }
+local lock_map_color, unlock_star_color, lock_star_color = { .85, .85, .85 }, { 0, 0, 0 }, { .65, .65, .65 }
 function MenuScene:load()
-    love.graphics.setBackgroundColor( 73 / 255, 170 / 255, 16 / 255 )
-
     local w, h = love.graphics.getDimensions()
     
     --  > Create levels buttons
@@ -16,12 +14,11 @@ function MenuScene:load()
             local map = Maps[current_id]
 
             --  > Create button
-            local button = Button()
+            local button = Button( "Level " .. current_id )
             button.w = button_size
             button.h = button_size
             button.x = ( w - buttons_per_line * ( button_size + 15 ) ) / 2 + ( x - 1 ) * ( button_size + 15 )
             button.y = ( y - 1 ) * ( button_size + 15 ) + h * .2
-            button.text = "Level " .. current_id
             if map then
                 --  > Score and stars
                 local score = Game.Scores[map.filename]
@@ -38,7 +35,7 @@ function MenuScene:load()
                    button.color = lock_map_color
                 end
 
-                function button:draw()
+                function button:paint()
                     --  > Draw default
                     self:drawBackground()
                     self:drawText( nil, nil, self.h * .35 )
@@ -61,6 +58,16 @@ function MenuScene:load()
 
             i = i + 1
         end
+    end
+
+    --  > Map Editor scene
+    local button = Button( "Map Editor" )
+    button.w = 150
+    button.h = 45
+    button.x = love.graphics.getWidth() - button.w - 15
+    button.y = love.graphics.getHeight() - button.h - 15
+    function button:onClick()
+        Game:setScene( MapEditorScene )
     end
 end
 
