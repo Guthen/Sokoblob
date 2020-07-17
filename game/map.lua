@@ -146,6 +146,7 @@ function BaseMap:draw()
             self:drawTile( self[y][x], x * object_size, y * object_size )
         end
     end
+end
 
 function BaseMap:drawTile( tile, x, y )
     local image = self.images[tile]
