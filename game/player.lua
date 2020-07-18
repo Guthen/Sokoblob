@@ -17,11 +17,11 @@ function BasePlayer:init()
     self.anim_y = self.y
 
     if not Game.IsPC then
-        local offset, space = love.graphics.getHeight() * .02, 5
-        InputButton( button_size + offset + space, love.graphics.getHeight() - button_size * 2 - ( offset + space ), "z", 2 )
-        InputButton( offset, love.graphics.getHeight() - button_size - offset, "q", 3 )
-        InputButton( button_size + offset + space, love.graphics.getHeight() - button_size - offset, "s", 4 )
-        InputButton( button_size * 2 + ( offset + space * 2 ), love.graphics.getHeight() - button_size - offset, "d", 1 )
+        local space = 5
+        InputButton( button_size + ui_offset + space, love.graphics.getHeight() - button_size * 2 - ( ui_offset + space ), "z", 2 )
+        InputButton( ui_offset, love.graphics.getHeight() - button_size - ui_offset, "q", 3 )
+        InputButton( button_size + ui_offset + space, love.graphics.getHeight() - button_size - ui_offset, "s", 4 )
+        InputButton( button_size * 2 + ( ui_offset + space * 2 ), love.graphics.getHeight() - button_size - ui_offset, "d", 1 )
     end
 end
 
@@ -94,6 +94,8 @@ function BasePlayer:keypress( key )
     self:move( dir.x, dir.y )
 end
 
+local instructions = "Move with 'Z', 'Q', 'S', 'D'\nRetry with 'R'\nGo to menu with 'Escape'"
+local tall = get_string_tall( instructions )
 function BasePlayer:draw()
     love.graphics.draw( self.image, self.quads[self.current_quad], self.anim_x * object_size, self.anim_y * object_size, 0, object_size / tile_size, object_size / tile_size )
 
@@ -102,11 +104,11 @@ function BasePlayer:draw()
     
     --  > Moves
     local limit = love.graphics.getWidth() * .5
-    love.graphics.printf( self.moves .. " moves", love.graphics.getWidth() / 2 - limit / 2, love.graphics.getHeight() * .02, limit, "center" )
+    love.graphics.printf( self.moves .. " moves", love.graphics.getWidth() / 2 - limit / 2, ui_offset, limit, "center" )
     
     --  > Keys
     if Game.IsPC then
-        love.graphics.printf( "Move with 'Z', 'Q', 'S', 'D'\nRetry with 'R'\nGo to menu with 'Escape'", 20, love.graphics.getHeight() * .9, limit )
+        love.graphics.printf( instructions, ui_offset, love.graphics.getHeight() - tall - ui_offset, limit )
     end
     
     love.graphics.pop()

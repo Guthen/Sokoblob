@@ -274,7 +274,9 @@ function MapEditorScene:keypressed( key )
     end
 end
 
-function MapEditorScene:draw()
+local instructions = "Move with 'Z', 'Q', 'S', 'D'\nPlace tile with LMB\nRemove tile with RMB\nCopy tile with MMB\nGo to menu with 'Escape'"
+local tall = get_string_tall( instructions )
+function MapEditorScene:draw( w, h )
     --  > Entities draw
     local old_camera_x, old_camera_y = Camera.x, Camera.y
     Camera.x, Camera.y = Camera.x + object_size, Camera.y + object_size
@@ -307,7 +309,8 @@ function MapEditorScene:draw()
     end
     Camera:pop()
 
-    local limit = 600
+    --  > Instructions
+    local limit = w * .6
     love.graphics.setColor( 1, 1, 1 )
-    love.graphics.printf( "Move with 'Z', 'Q', 'S', 'D'\nPlace tile with LMB\nRemove tile with RMB\nCopy tile with MMB\nGo to menu with 'Escape'", 20, love.graphics.getHeight() * .84, limit )
+    love.graphics.printf( instructions, ui_offset, h - tall - ui_offset, limit )
 end

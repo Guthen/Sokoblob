@@ -16,9 +16,8 @@ function GameScene:load()
 
     --  > Sort
     if not Game.IsPC then
-        local offset = love.graphics.getHeight() * .02
-        InputButton( offset, offset * 3, "escape", 5 )
-        InputButton( love.graphics.getWidth() - button_size - offset, offset * 3, "r", 6 )
+        InputButton( ui_offset, ui_offset * 2, "escape", 5 )
+        InputButton( love.graphics.getWidth() - button_size - ui_offset, ui_offset * 2, "r", 6 )
     end
 
     Entities:sort()
@@ -97,7 +96,7 @@ function GameScene:draw( w, h )
     Camera:pop()
 
     --  > Level
-    love.graphics.print( "Level " .. map_id, h * .02, h * .02 )
+    love.graphics.print( "Level " .. map_id, ui_offset, ui_offset )
 
     --  > Win message
     if win then

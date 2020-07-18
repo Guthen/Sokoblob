@@ -14,7 +14,7 @@ end
 
 --  > Variables
 local w, h = love.graphics.getDimensions()
-object_size, tile_size, button_size = w * .025 + h * .044, 16, w * .05 + h * .05
+object_size, tile_size, button_size, ui_offset = w * .025 + h * .044, 16, w * .06 + h * .06, w * .015 + h * .015
 map_id = 1
 
 --  > Graphics settings
@@ -150,5 +150,5 @@ function love.draw()
     --  > FPS
     local limit, text = w * .25, "FPS " .. love.timer.getFPS()
     love.graphics.setColor( 1, 1, 1 )
-    love.graphics.printf( text, love.graphics.getWidth() - limit - h * .02, h * .02, limit, "right" )
+    love.graphics.printf( text, love.graphics.getWidth() - limit - ui_offset, ui_offset, limit, "right" )
 end 

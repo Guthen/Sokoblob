@@ -16,6 +16,16 @@ function enum( name, tbl )
     end
 end
 
+function get_string_tall( text )
+	local lines = 1
+
+	for l in text:gmatch( "\n" ) do
+		lines = lines + 1
+	end
+
+	return lines * love.graphics.getFont():getHeight()
+end
+
 --  > https://love2d.org/wiki/HSL_color (this code look a mess :sue:)
 function hsl(h, s, l, a)
 	if s<=0 then return l,l,l,a end
