@@ -14,7 +14,7 @@ end
 
 --  > Variables
 local w, h = love.graphics.getDimensions()
-object_size, tile_size, button_size, ui_offset = w * .025 + h * .044, 16, w * .06 + h * .06, w * .015 + h * .015
+object_size, tile_size, button_size, ui_offset = w * .035 + h * .044, 16, w * .06 + h * .06, w * .015 + h * .015
 map_id = 1
 
 --  > Graphics settings
@@ -122,6 +122,14 @@ function Game:playSound( filename )
     sound:setVolume( .5 )
     sound:play()
 end
+
+function Game:playMusic( filename )
+    local sound = love.audio.newSource( "sounds/musics/" .. filename, "stream" )
+    sound:setVolume( .75 )
+    sound:setLooping( true )
+    sound:play()
+end
+Game:playMusic( "main.wav" )
 
 --  > Framework
 function love.load()
