@@ -21,7 +21,7 @@ function BaseCubes:create( x, y )
         self.y = self.y + y
 
         --  > Move sound
-        Game:playSound( "box_move0" .. math.random( 1, 3 ) .. ".wav" )
+        Game:playSound( ( "box_move%02d.wav" ):format( math.random( 3 ) ) )
 
         --  > Confirmed cube
         self.confirmed = Map:getTileAt( self.x, self.y ) == TILE_SPOT

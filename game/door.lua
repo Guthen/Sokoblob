@@ -20,7 +20,7 @@ function BaseDoors:triggerDoors()
         v.toggled = not v.toggled
     end
 
-    Game:playSound( "door_switch.wav" )
+    Game:playSound( ( "door_switch%02d.wav" ):format( math.random( 3 ) ) )
 end
 
 function BaseDoors:check()
