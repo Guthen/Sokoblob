@@ -156,7 +156,9 @@ function love.draw()
     Game.ActiveScene:draw( love.graphics.getDimensions() )
 
     --  > FPS
-    local limit, text = w * .25, "FPS " .. love.timer.getFPS()
     love.graphics.setColor( 1, 1, 1 )
-    love.graphics.printf( text, love.graphics.getWidth() - limit - ui_offset, ui_offset, limit, "right" )
-end 
+    if Game.IsPC then
+        local limit, text = w * .25, "FPS " .. love.timer.getFPS()
+        love.graphics.printf( text, love.graphics.getWidth() - limit - ui_offset, ui_offset, limit, "right" )
+    end
+end

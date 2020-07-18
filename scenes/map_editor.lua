@@ -270,7 +270,7 @@ function MapEditorScene:keypressed( key )
         self.map = Map
 
         BaseMap:reloadMaps()
-        Game:setScene( MenuScene )
+        Game:setScene( LevelsScene )
     end
 end
 

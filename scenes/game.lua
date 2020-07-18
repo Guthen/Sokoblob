@@ -59,7 +59,7 @@ end
 function GameScene:keypressed( key )
     --  > Echap
     if key == "escape" then
-        Game:setScene( MenuScene )
+        Game:setScene( LevelsScene )
         return
     end
 
