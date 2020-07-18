@@ -91,6 +91,11 @@ function BasePlayer:keypress( key )
     local dir = directions[key]
     if not dir then return end
 
+    if GameScene.win then
+        GameScene:nextMap()
+        return
+    end
+
     self:move( dir.x, dir.y )
 end
 

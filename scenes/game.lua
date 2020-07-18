@@ -1,6 +1,9 @@
 GameScene = Scene()
 
+local vibrated
 function GameScene:load()
+    vibrated = false
+
     --  > Create entities
     Map = BaseMap()
     Player = BasePlayer()
@@ -23,21 +26,20 @@ function GameScene:load()
     Entities:sort()
 end
 
-local win, vibrated = false, false
 function GameScene:update( dt )
     Entities:call( "think", dt )
 
     --  > Get game win
-    win = Cubes:checkWin()
+    self.win = Cubes:checkWin()
 
-    if win and not vibrated then
+    if self.win and not vibrated then
         vibrated = true
 
         love.system.vibrate( 0.2 )
     end
 end
 
-local function next_map()
+function GameScene:nextMap()
     local map_name = Maps[map_id].filename
     local last_score = Game.Scores[map_name]
     if not last_score or last_score > Player.moves then
@@ -51,13 +53,6 @@ local function next_map()
 end
 
 function GameScene:mousepressed( x, y, mouse_button )
-    --  > Score and next map
-    if win then
-        --  > Score
-        next_map()
-        return
-    end
-
     Entities:call( "mousepress", x, y, mouse_button )
 end
 
@@ -77,9 +72,9 @@ function GameScene:keypressed( key )
     end
 
     --  > Score and next map
-    if win then
+    if self.win then
         --  > Score
-        next_map()
+        self:nextMap()
         return
     end
 
@@ -99,7 +94,7 @@ function GameScene:draw( w, h )
     love.graphics.print( "Level " .. map_id, ui_offset, ui_offset )
 
     --  > Win message
-    if win then
+    if self.win then
         local limit = w * .8
         love.graphics.setColor( 1, 1, 1 )
         love.graphics.printf( "You won!\nMove to get to the next map and save your highscore", w / 2 - limit / 2, h * .15, limit, "center" )
