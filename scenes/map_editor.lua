@@ -73,6 +73,7 @@ function MapEditorScene:load()
     end
 
     --  > Editor variables
+    self.title_alpha = 1
     self.tile_id = self.tile_id or 1
     self.tiles = {
         TILE_WALL_A,
@@ -224,6 +225,9 @@ function MapEditorScene:update( dt )
     if love.keyboard.isDown( "d" ) then
         Camera.x = Camera.x + speed
     end
+
+    --  > Title
+    self.title_alpha = approach( self.title_alpha, 0, dt / 2 )
 end
 
 function MapEditorScene:mousepressed( x, y, button )
@@ -313,4 +317,10 @@ function MapEditorScene:draw( w, h )
     local limit = w * .6
     love.graphics.setColor( 1, 1, 1 )
     love.graphics.printf( instructions, ui_offset, h - tall - ui_offset, limit )
+
+    --  > Title
+    if self.title_alpha <= 0 then return end
+    
+    love.graphics.setColor( 1, 1, 1, self.title_alpha )
+    self:drawTitle( "Map Editor" )
 end

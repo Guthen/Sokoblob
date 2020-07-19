@@ -17,7 +17,7 @@ function LevelsScene:load()
             local button = Button( "Level " .. current_id )
             button.w = button_size
             button.h = button_size
-            button.x = ( w - buttons_per_line * ( button_size + 15 ) ) / 2 + ( x - 1 ) * ( button_size + 15 )
+            button.x = ( w - buttons_per_line * ( button_size + w * .01 ) ) / 2 + ( x - 1 ) * ( button_size + w * .01 )
             button.y = ( y - 1 ) * ( button_size + w * .01 ) + h * .15
             if map then
                 --  > Score and stars
@@ -90,7 +90,6 @@ end
 function LevelsScene:draw( w, h )
     Entities:call( "draw" )
 
-    local limit, scale = 200, 2
     love.graphics.setColor( 1, 1, 1 )
-    love.graphics.printf( "Levels", w / 2 - limit * scale / 2, h * .045, limit, "center", 0, scale, scale )
+    self:drawTitle( "Levels" )
 end
