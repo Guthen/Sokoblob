@@ -7,6 +7,8 @@ local pc_os = {
 Game = {
     Scores = {},
     IsPC = pc_os[love.system.getOS()],
+    SoundVolume = .5,
+    MusicVolume = .75,
 }
 if not Game.IsPC then
     love.window.setFullscreen( true )
@@ -119,17 +121,22 @@ end
 
 function Game:playSound( filename )
     local sound = love.audio.newSource( "sounds/" .. filename, "static" )
-    sound:setVolume( .5 )
+    sound:setVolume( Game.SoundVolume )
     sound:play()
 end
 
 function Game:playMusic( filename )
     local sound = love.audio.newSource( "sounds/musics/" .. filename, "stream" )
-    sound:setVolume( .75 )
+    sound:setVolume( Game.MusicVolume )
     sound:setLooping( true )
     sound:play()
+
+    Game.Music = sound
 end
-Game:playMusic( "main.wav" )
+
+if not love.system.hasBackgroundMusic() then
+    Game:playMusic( "main.wav" )
+end
 
 --  > Framework
 function love.load()
@@ -158,7 +165,7 @@ function love.draw()
     --  > FPS
     love.graphics.setColor( 1, 1, 1 )
     if Game.IsPC then
-        local limit, text = w * .25, "FPS " .. love.timer.getFPS()
-        love.graphics.printf( text, love.graphics.getWidth() - limit - ui_offset, ui_offset, limit, "right" )
+        local limit = w * .25
+        love.graphics.printf( "FPS " .. love.timer.getFPS(), love.graphics.getWidth() - limit - ui_offset, ui_offset, limit, "right" )
     end
 end

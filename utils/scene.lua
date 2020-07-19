@@ -18,3 +18,10 @@ end
 
 function Scene:draw()
 end
+
+function Scene:drawTitle( text )
+    local w, h = love.graphics.getDimensions()
+
+    local limit, scale = w * .5, 2
+    love.graphics.printf( text, w / 2 - limit * scale / 2, h * .045, limit, "center", 0, scale, scale )
+end

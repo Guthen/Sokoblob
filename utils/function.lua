@@ -16,6 +16,20 @@ function enum( name, tbl )
     end
 end
 
+function clamp( value, min, max )
+	return value < min and min or value > max and max or value
+end
+
+function collide( a, b )
+    return a.x < b.x + b.w and b.x < a.x + a.w 
+       and a.y < b.y + b.h and b.y < a.y + a.h
+end
+
+function get_hovered_color( base_color, hovered_amount )
+	hovered_amount = hovered_amount or .1
+	return { base_color[1] - hovered_amount, base_color[2] - hovered_amount, base_color[3] - hovered_amount }
+end
+
 function get_string_tall( text )
 	local lines = 1
 

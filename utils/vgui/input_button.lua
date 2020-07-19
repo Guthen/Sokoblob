@@ -21,11 +21,6 @@ function InputButton:construct( x, y, key, quad )
     self.quad = quad or 1
 end
 
-local function collide( a, b )
-    return a.x < b.x + b.w and b.x < a.x + a.w 
-       and a.y < b.y + b.h and b.y < a.y + a.h
-end
-
 function InputButton:mousepress( x, y, mouse_button )
     if not ( mouse_button == 1 ) then return end
 

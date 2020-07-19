@@ -1,3 +1,5 @@
+require( "scenes/settings" )
+
 MenuScene = Scene()
 
 local scenes = {
@@ -9,6 +11,10 @@ local scenes = {
         text = "Map Editor",
         scene = MapEditorScene,
         only_pc = true,
+    },
+    {
+        text = "Settings",
+        scene = SettingsScene,
     },
 }
 
