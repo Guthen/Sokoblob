@@ -8,7 +8,7 @@ Game = {
     Scores = {},
     IsPC = pc_os[love.system.getOS()],
     SoundVolume = .5,
-    MusicVolume = .75,
+    MusicVolume = .35,
 }
 Game.Version = "1.2.0 DEV"
 Game.Author = ( "By %s" ):format( Game.IsPC and "Guthen" or "Guthen & Nogitsu" )
@@ -24,8 +24,10 @@ map_id = 1
 
 --  > Graphics settings
 love.graphics.setDefaultFilter( "nearest" )
-love.graphics.setFont( love.graphics.newFont( "fonts/SMB2.ttf", w * .01 + h * .0075 ) )
 love.graphics.setBackgroundColor( 73 / 255, 170 / 255, 16 / 255 )
+
+Game.Font = love.graphics.newFont( "fonts/SMB2.ttf", w * .01 + h * .0075 )
+love.graphics.setFont( Game.Font )
 
 --  > Require all files in specific folder
 local function require_folder( folder )
@@ -116,10 +118,10 @@ function Game:saveScores()
     end
 end
 
-function Game:setScene( scene )
+function Game:setScene( scene, ... )
     Entities:clear()
     self.ActiveScene = scene
-    love.load()
+    love.load( ... )
 end
 
 function Game:playSound( filename )
@@ -142,9 +144,9 @@ if not love.system.hasBackgroundMusic() then
 end
 
 --  > Framework
-function love.load()
+function love.load( ... )
     --  > Scene
-    Game.ActiveScene:load()
+    Game.ActiveScene:load( ... )
 end
 
 function love.update( dt )

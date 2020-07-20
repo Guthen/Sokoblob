@@ -1,24 +1,27 @@
 LevelsScene = Scene()
 
 local image_star = love.graphics.newImage( "images/star.png" )
-local lock_map_color, unlock_star_color, lock_star_color = { .85, .85, .85 }, { 0, 0, 0 }, { .65, .65, .65 }
-function LevelsScene:load()
+local unlock_star_color, lock_star_color = { 0, 0, 0 }, { .65, .65, .65 }
+function LevelsScene:load( page )
+    page = ( page or 1 ) - 1
+
     local w, h = love.graphics.getDimensions()
     
     --  > Create levels buttons
     local map_lock = false
-    local button_size, buttons_per_line, i = w * .08 + h * .07, 5, 1
-    for y = 1, 3 do
+    local button_size, button_space, buttons_per_line, lines, i = w * .08 + h * .07, w * .01, 5, 3, 1
+    local x_offset, y_offset = ( w - buttons_per_line * ( button_size + button_space ) ) / 2, h * .15
+    for y = 1, lines do
         for x = 1, buttons_per_line do
-            local current_id = i
+            local current_id = page * lines * buttons_per_line + i
             local map = Maps[current_id]
 
             --  > Create button
             local button = Button( "Level " .. current_id )
             button.w = button_size
             button.h = button_size
-            button.x = ( w - buttons_per_line * ( button_size + w * .01 ) ) / 2 + ( x - 1 ) * ( button_size + w * .01 )
-            button.y = ( y - 1 ) * ( button_size + w * .01 ) + h * .15
+            button.x = x_offset + ( x - 1 ) * ( button_size + w * .01 )
+            button.y = y_offset + ( y - 1 ) * ( button_size + button_space )
             if map then
                 --  > Score and stars
                 local score = Game.Scores[map.filename]
@@ -32,7 +35,7 @@ function LevelsScene:load()
                         Game:setScene( GameScene )
                     end
                 else
-                   button.color = lock_map_color
+                   button.disabled = true
                 end
 
                 function button:paint()
@@ -53,11 +56,28 @@ function LevelsScene:load()
                     map_lock = true
                 end
             else
-                button.color = lock_map_color
+                button.disabled = true
             end
 
             i = i + 1
         end
+    end
+
+    --  > Pager
+    local next_button = Button( "Next" )
+    next_button.x = x_offset + ( buttons_per_line - 1 ) * ( button_size + button_space ) + button_size - next_button.w
+    next_button.y = y_offset + lines * ( button_size + button_space )
+    next_button.disabled = #Maps <= buttons_per_line * lines * ( page + 1 )
+    function next_button:onClick()
+        Game:setScene( LevelsScene, page + 2 )
+    end
+
+    local previous_button = Button( "Previous" )
+    previous_button.x = x_offset
+    previous_button.y = next_button.y
+    previous_button.disabled = page <= 0
+    function previous_button:onClick()
+        Game:setScene( LevelsScene, page )
     end
 
     --  > Map Editor scene

@@ -31,8 +31,8 @@ end
 
 function Scene:drawCredits()
     love.graphics.setColor( 1, 1, 1 )
-    
-    local x, y = ui_offset, love.graphics.getHeight() - love.graphics.getFont():getHeight() / 2 - ui_offset
+
+    local x, y = ui_offset, love.graphics.getHeight() - Game.Font:getHeight() / 2 - ui_offset
     love.graphics.print( "v" .. Game.Version, x, y )
 
     local limit = love.graphics.getWidth() * .5

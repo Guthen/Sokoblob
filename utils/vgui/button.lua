@@ -3,16 +3,20 @@ require( "utils/vgui/label" )
 Button = class( Label )
 Button.text_color = { 0, 0, 0 }
 Button.text_align = "center"
+Button.disabled_color = { .85, .85, .85 }
 
 function Button:construct( text, x, y )
     self.super.construct( self, text, x, y )
 
     self.w = self.w + 10
     self.h = self.h + 10
+
+    self.disabled = false
 end
 
 function Button:mousepress( x, y, mouse_button )
     if not ( mouse_button == 1 ) then return end
+    if self.disabled then return end
 
     if not Game.IsPC then
         if collide( { x = x, y = y, w = 1, h = 1 }, self ) then
@@ -48,7 +52,9 @@ function Button:paint()
 end
 
 function Button:drawBackground()
+    local color = self.disabled and self.disabled_color or self.color
+
     --  > Draw background
-    love.graphics.setColor( self.hovered and get_hovered_color( self.color ) or self.color )
+    love.graphics.setColor( self.hovered and get_hovered_color( color ) or color )
     love.graphics.rectangle( "fill", self.x, self.y, self.w, self.h )
 end

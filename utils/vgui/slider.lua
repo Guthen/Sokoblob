@@ -37,7 +37,7 @@ end
 
 function Slider:think()
     --  > Label position
-    self.label.x = self.x - love.graphics.getFont():getWidth( " " ) / 2
+    self.label.x = self.x - Game.Font:getWidth( " " ) / 2
     self.label.y = self.y - self.label.h - space
 
     --  > Hovered

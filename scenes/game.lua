@@ -112,7 +112,7 @@ function GameScene:draw( w, h )
         if Player.moves < ( Maps[map_id].level.high_score or - 1 ) then
             local limit, r, g, b = w * .5, hsl( ( love.timer.getTime() * 250 ) % 360, 200, 100 )
             love.graphics.setColor( r / 255, g / 255, b / 255 )
-            love.graphics.printf( "You beat the creator's highscore!\nYou're a fookin legend!", w / 2, h * .2 + image_star:getHeight() * scale / 2 - love.graphics.getFont():getHeight() / 2, limit, "center", math.cos( love.timer.getTime() * 3 ) / 10, 1, 1, limit / 2 )
+            love.graphics.printf( "You beat the creator's highscore!\nYou're a fookin legend!", w / 2, h * .2 + image_star:getHeight() * scale / 2 - Game.Font:getHeight() / 2, limit, "center", math.cos( love.timer.getTime() * 3 ) / 10, 1, 1, limit / 2 )
         end
 
         --  > Game end message

@@ -10,12 +10,12 @@ function Label:construct( text, x, y, scale )
     self.scale = scale or 1
 
     --  > Size
-    self.h = love.graphics.getFont():getHeight()
+    self.h = Game.Font:getHeight()
     self:fitToText()
 end
 
 function Label:fitToText()
-    self.w = love.graphics.getFont():getWidth( self.text )
+    self.w = Game.Font:getWidth( self.text )
     self.w = self.w + self.w * .06
 end
 
@@ -32,5 +32,5 @@ function Label:drawText( text, off_x, off_y )
     if self.text_align == "right" then off_x = off_x - limit end
 
     love.graphics.setColor( self.text_color or self.color )
-    love.graphics.printf( text, self.x + off_x + self.w - limit, self.y + off_y - love.graphics.getFont():getHeight() / 2, limit, self.text_align, 0, self.scale, self.scale )
+    love.graphics.printf( text, self.x + off_x + self.w - limit, self.y + off_y - Game.Font:getHeight() / 2, limit, self.text_align, 0, self.scale, self.scale )
 end

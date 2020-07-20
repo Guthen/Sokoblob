@@ -37,7 +37,7 @@ function get_string_tall( text )
 		lines = lines + 1
 	end
 
-	return lines * love.graphics.getFont():getHeight()
+	return lines * Game.Font:getHeight()
 end
 
 --  > https://love2d.org/wiki/HSL_color (this code look a mess :sue:)

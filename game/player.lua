@@ -1,6 +1,8 @@
 BasePlayer = class( Entity )
 BasePlayer.image = love.graphics.newImage( "images/blob.png" )
 BasePlayer.z_index = 1
+BasePlayer.scale = 1
+BasePlayer.color = { 97 / 255, 211 / 255, 227 / 255 }
 
 --  > Create animations quads
 local quads = {}
@@ -9,6 +11,12 @@ for x = 0, BasePlayer.image:getWidth() - tile_size, tile_size do
 end
 BasePlayer.quads = quads
 BasePlayer.current_quad = 1
+
+function BasePlayer:construct()
+    Entity.construct( self )
+
+    self.color = BasePlayer.color
+end
 
 --  > Init player
 function BasePlayer:init()
@@ -101,11 +109,17 @@ end
 
 local instructions = "Move with 'Z', 'Q', 'S', 'D'\nRetry with 'R'\nGo to menu with 'Escape'"
 local tall = get_string_tall( instructions )
-function BasePlayer:draw()
-    love.graphics.draw( self.image, self.quads[self.current_quad], self.anim_x * object_size, self.anim_y * object_size, 0, object_size / tile_size, object_size / tile_size )
+function BasePlayer:draw( only_player )
+    --  > Player
+    love.graphics.setColor( self.color )
+    love.graphics.draw( self.image, self.quads[self.current_quad], self.anim_x * object_size, self.anim_y * object_size, 0, object_size / tile_size * self.scale, object_size / tile_size * self.scale )
+
+    --  > Texts
+    if only_player then return end
 
     love.graphics.push()
     love.graphics.origin()
+    love.graphics.setColor( 1, 1, 1 )
     
     --  > Moves
     local limit = love.graphics.getWidth() * .5
