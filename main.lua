@@ -10,6 +10,9 @@ Game = {
     SoundVolume = .5,
     MusicVolume = .75,
 }
+Game.Version = "1.2.0 DEV"
+Game.Author = ( "By %s" ):format( Game.IsPC and "Guthen" or "Guthen & Nogitsu" )
+
 if not Game.IsPC then
     love.window.setFullscreen( true )
 end
@@ -134,9 +137,9 @@ function Game:playMusic( filename )
     Game.Music = sound
 end
 
---[[ if not love.system.hasBackgroundMusic() then
+if not love.system.hasBackgroundMusic() then
     Game:playMusic( "anxious.wav" )
-end ]]
+end
 
 --  > Framework
 function love.load()

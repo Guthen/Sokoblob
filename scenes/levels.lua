@@ -90,6 +90,6 @@ end
 function LevelsScene:draw( w, h )
     Entities:call( "draw" )
 
-    love.graphics.setColor( 1, 1, 1 )
+    self:drawCredits()
     self:drawTitle( "Levels" )
 end

@@ -45,6 +45,6 @@ end
 function SettingsScene:draw()
     Entities:call( "draw" )
 
-    love.graphics.setColor( 1, 1, 1 )
+    self:drawCredits()
     self:drawTitle( "Settings" )
 end

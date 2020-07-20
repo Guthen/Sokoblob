@@ -21,7 +21,7 @@ local scenes = {
 function MenuScene:load()
     local w, h = love.graphics.getDimensions()
 
-    local space = w * .005 + h * .005
+    local space, y = w * .005 + h * .005, 1
     for i, v in ipairs( scenes ) do
         if v.only_pc and not Game.IsPC then goto continue end
 
@@ -29,11 +29,13 @@ function MenuScene:load()
         button.w = w * .2
         button.h = h * .075
         button.x = w / 2 - button.w / 2
-        button.y = h / 4 - button.h / 2 + i * ( button.h + space )
+        button.y = h / 4 - button.h / 2 + y * ( button.h + space )
         function button:onClick()
             Game:setScene( v.scene )
         end
 
+        y = y + 1
+        
         ::continue::
     end
 
@@ -57,4 +59,6 @@ end
 
 function MenuScene:draw( w, h )
     Entities:call( "draw" )
+
+    self:drawCredits()
 end
