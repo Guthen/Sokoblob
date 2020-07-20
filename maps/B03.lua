@@ -3,10 +3,10 @@ local P, W, _, B, D, DC, C, S = TILE_PLAYER, TILE_WALL_A, TILE_VOID, TILE_BUTTON
 return {
 	{ W, W, W, W, W, W, W, },
 	{ W, _, _, _, W, W, W, },
-	{ W, P, C, _,DC, S, W, },
+	{ W, P, C, _, _, S, W, },
 	{ W, _, _, _, W, W, W, },
 	{ W, D, B, W, W, W, W, },
-	{ W, _, C, _, D, S, W, },
+	{ W, _, C, _, _, S, W, },
 	{ W, W, W, W, W, W, W, },
 	high_score = 19,
 }
