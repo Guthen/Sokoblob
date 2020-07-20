@@ -22,6 +22,11 @@ function SettingsScene:load()
         Game.Music:setVolume( self.value )
     end
 
+    --  > Get home on mobile
+    if not Game.IsPC then
+        InputButton( ui_offset, ui_offset * 2, "escape", 5 )
+    end
+
     Entities:call( "init" )
 end
 

@@ -80,6 +80,11 @@ function LevelsScene:load( page )
         Game:setScene( LevelsScene, page )
     end
 
+    --  > Get home on mobile
+    if not Game.IsPC then
+        InputButton( ui_offset, ui_offset * 2, "escape", 5 )
+    end
+
     --  > Map Editor scene
     --[[ if Game.IsPC then
         local button = Button( "Map Editor" )

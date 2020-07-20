@@ -30,5 +30,6 @@ function InputButton:mousepress( x, y, mouse_button )
 end
 
 function InputButton:paint()
+    love.graphics.setColor( 1, 1, 1 )
     love.graphics.draw( self.image, self.quads[ self.quad ], self.x, self.y, 0, button_size / tile_size, button_size / tile_size )
 end
