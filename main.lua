@@ -134,9 +134,9 @@ function Game:playMusic( filename )
     Game.Music = sound
 end
 
-if not love.system.hasBackgroundMusic() then
-    Game:playMusic( "main.wav" )
-end
+--[[ if not love.system.hasBackgroundMusic() then
+    Game:playMusic( "anxious.wav" )
+end ]]
 
 --  > Framework
 function love.load()
@@ -156,6 +156,10 @@ end
 
 function love.mousepressed( x, y, mouse_button )
     Game.ActiveScene:mousepressed( x, y, mouse_button )
+end
+
+function love.wheelmoved( x, y )
+    Game.ActiveScene:wheelmoved( x, y )
 end
 
 function love.draw()

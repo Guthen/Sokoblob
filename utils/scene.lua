@@ -16,6 +16,9 @@ end
 function Scene:mousepressed( x, y, mouse_button )
 end
 
+function Scene:wheelmoved( x, y )
+end
+
 function Scene:draw()
 end
 

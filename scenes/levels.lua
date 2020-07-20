@@ -61,7 +61,7 @@ function LevelsScene:load()
     end
 
     --  > Map Editor scene
-    if Game.IsPC then
+    --[[ if Game.IsPC then
         local button = Button( "Map Editor" )
         button.w = w / h * 130
         button.h = w / h * 35
@@ -70,7 +70,7 @@ function LevelsScene:load()
         function button:onClick()
             Game:setScene( MapEditorScene )
         end
-    end
+    end ]]
 end
 
 function LevelsScene:keypressed( key )
