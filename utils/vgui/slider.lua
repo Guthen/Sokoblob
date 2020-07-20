@@ -78,5 +78,5 @@ function Slider:paint()
         h = self.h,
         text_align = "right",
         color = self.label.color,
-    }, math.floor( self.value * 100 ) .. "%" )
+    }, ( "%d%%" ):format( self.value * 100 ) )
 end
