@@ -14,6 +14,6 @@ return {
 	{ W, W, W, W, W, W, W, W, W, },
 	high_score = 85,
 	options = {
-		scale = .8,
-	}
+		scale = .765,
+	},
 }

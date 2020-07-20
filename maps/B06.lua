@@ -11,4 +11,7 @@ return {
 	{ W, _, _, _, _, _, _, W, },
 	{ W, W, W, W, W, W, W, W, },
 	high_score = 39,
+	options = {
+		scale = .935,
+	},
 }
