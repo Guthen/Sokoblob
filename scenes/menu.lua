@@ -16,6 +16,10 @@ local scenes = {
         text = "Settings",
         scene = SettingsScene,
     },
+    {
+        text = "Quit",
+        func = love.event.quit,
+    }
 }
 
 function MenuScene:load()
@@ -32,6 +36,7 @@ function MenuScene:load()
         button.x = w / 2 - button.w / 2
         button.y = h / 4 - button.h / 2 + y * ( button.h + space )
         function button:onClick()
+            if v.func then return v.func() end
             Game:setScene( v.scene )
         end
 
