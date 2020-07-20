@@ -87,117 +87,128 @@ function MapEditorScene:load()
     
     --  > Editor UI
     local offset = w / h * 10
-    local y, h = self:createEditableNumber( "Map Width", offset, offset, Map.w / object_size, function( value, op )
-        if op == "+" then
+    do
+        local y, h = self:createEditableNumber( "Map Width", offset, offset, Map.w / object_size, function( value, op )
+            if op == "+" then
+                for y = 1, #Map do
+                    Map[y][#Map[y] + 1] = TILE_VOID
+                end
+            elseif op == "-" then
+                for y = 1, #Map do
+                    Map[y][#Map[y]] = nil
+                end
+            end
+
+            Map:computeSize()
+            self.map_width = Map.w / object_size
+        end )
+        y, h = self:createEditableNumber( "Map Height", offset, offset + y + h, Map.h / object_size, function( value, op )
+            if op == "+" then
+                local line = {}
+
+                for x = 1, Map.w / object_size do
+                    line[x] = TILE_VOID
+                end
+
+                Map[#Map + 1] = line
+            elseif op == "-" then
+                Map[#Map] = nil
+            end
+
+            Map:computeSize()
+            self.map_height = Map.h / object_size
+        end )
+        y, h = self:createEditableNumber( "Tile ID", offset, offset + y + h, self.tile_id, function( value, op ) 
+            if op == "+" then
+                self.tile_id = value > #self.tiles and 1 or value
+            elseif op == "-" then
+                self.tile_id = value < 1 and #self.tiles or value
+            end
+        end )
+        
+        --  > Highscore
+        y, h = self:createEditableNumber( "Highscore", offset, offset + y + h, 0, function( value, op ) end )
+
+        --  > Save button
+        local save_button = Button( "Save", offset, offset + y + h )
+        function save_button.onClick( _, filename )
+            filename = type( filename ) == "string" and filename or nil
+
+            --  > Parse table to Lua code
+            local shortcuts = {
+                [TILE_PLAYER] = "P",
+                [TILE_WALL_A] = "W",
+                [TILE_VOID] = "_",
+                [TILE_BUTTON] = "B",
+                [TILE_DOOR] = "D",
+                [TILE_DOOR_CLOSE] = "DC",
+                [TILE_CUBE] = "C",
+                [TILE_SPOT] = "S",
+            }
+
+            local lua = "local P, W, _, B, D, DC, C, S = TILE_PLAYER, TILE_WALL_A, TILE_VOID, TILE_BUTTON, TILE_DOOR, TILE_DOOR_CLOSE, TILE_CUBE, TILE_SPOT\n\n"
+            lua = lua .. "return {\n"
+
+            for y, yv in ipairs( Map ) do
+                lua = lua .. "\t{ "
+
+                for x, xv in ipairs( yv ) do
+                    lua = lua .. ( "%s, " ):format( shortcuts[xv] or xv )
+                end
+
+                lua = lua .. "},\n"
+            end
+
+            lua = lua .. ( "\thigh_score = %d,\n" ):format( self.highscore )
+            lua = lua .. "}"
+
+            --  > Write
+            love.filesystem.createDirectory( "maps" )
+            print( "Map Editor: saved:", love.filesystem.write( "maps/" .. ( filename or os.date( "xyz_%d_%m_%Y-%H_%M_%S" ) ) .. ".lua", lua ) )
+        end
+
+        --  > Clear button
+        local clear_button = Button( "Clear", save_button.x + offset + save_button.w, save_button.y )
+        function clear_button:onClick()
             for y = 1, #Map do
-                Map[y][#Map[y] + 1] = TILE_VOID
-            end
-        elseif op == "-" then
-            for y = 1, #Map do
-                Map[y][#Map[y]] = nil
+                for x = 1, #Map[y] do
+                    Map[y][x] = TILE_VOID
+                end
             end
         end
 
-        Map:computeSize()
-        self.map_width = Map.w / object_size
-    end )
-    y, h = self:createEditableNumber( "Map Height", offset, offset + y + h, Map.h / object_size, function( value, op )
-        if op == "+" then
-            local line = {}
-
-            for x = 1, Map.w / object_size do
-                line[x] = TILE_VOID
+        --  > Load button
+        y, h = self:createEditableNumber( "Map ID", offset, save_button.y + clear_button.h + offset * 2, self.map_id or 1, function( value, op ) 
+            if op == "+" then
+                self.map_id = value > #Maps and 1 or value
+            elseif op == "-" then
+                self.map_id = value < 1 and #Maps or value
             end
+        end )
 
-            Map[#Map + 1] = line
-        elseif op == "-" then
-            Map[#Map] = nil
+        local load_button = Button( "Load", offset, offset + y + h )
+        function load_button.onClick()
+            Map:loadMap( Maps[self.map_id], true )
+
+            self.map_width = Map.w / object_size
+            self.map_height = Map.h / object_size
+
+            self.highscore = Game:getHighscore( self.map_id, true )
         end
 
-        Map:computeSize()
-        self.map_height = Map.h / object_size
-    end )
-    y, h = self:createEditableNumber( "Tile ID", offset, offset + y + h, self.tile_id, function( value, op ) 
-        if op == "+" then
-            self.tile_id = value > #self.tiles and 1 or value
-        elseif op == "-" then
-            self.tile_id = value < 1 and #self.tiles or value
+        local overwrite_button = Button( "Overwrite", load_button.x + offset + load_button.w, load_button.y )
+        function overwrite_button.onClick()
+            save_button:onClick( Maps[self.map_id].filename )
         end
-    end )
-    
-    --  > Highscore
-    y, h = self:createEditableNumber( "Highscore", offset, offset + y + h, 0, function( value, op ) end )
+    end
 
-    --  > Save button
-    local save_button = Button( "Save", offset, offset + y + h )
-    function save_button.onClick( _, filename )
-        filename = type( filename ) == "string" and filename or nil
-
-        --  > Parse table to Lua code
-        local shortcuts = {
-            [TILE_PLAYER] = "P",
-            [TILE_WALL_A] = "W",
-            [TILE_VOID] = "_",
-            [TILE_BUTTON] = "B",
-            [TILE_DOOR] = "D",
-            [TILE_DOOR_CLOSE] = "DC",
-            [TILE_CUBE] = "C",
-            [TILE_SPOT] = "S",
-        }
-
-        local lua = "local P, W, _, B, D, DC, C, S = TILE_PLAYER, TILE_WALL_A, TILE_VOID, TILE_BUTTON, TILE_DOOR, TILE_DOOR_CLOSE, TILE_CUBE, TILE_SPOT\n\n"
-        lua = lua .. "return {\n"
-
-        for y, yv in ipairs( Map ) do
-            lua = lua .. "\t{ "
-
-            for x, xv in ipairs( yv ) do
-                lua = lua .. ( "%s, " ):format( shortcuts[xv] or xv )
-            end
-
-            lua = lua .. "},\n"
-        end
-
-        lua = lua .. ( "\thigh_score = %d,\n" ):format( self.highscore )
-        lua = lua .. "}"
-
-        --  > Write
+    --  > Save browser
+    local browser_button = Button( "Open maps directory" )
+    browser_button.x = w - browser_button.w - offset
+    browser_button.y = h - browser_button.h - offset
+    function browser_button.onClick()
         love.filesystem.createDirectory( "maps" )
-        print( "Map Editor: saved:", love.filesystem.write( "maps/" .. ( filename or os.date( "xyz_%d_%m_%Y-%H_%M_%S" ) ) .. ".lua", lua ) )
-    end
-
-    --  > Clear button
-    local clear_button = Button( "Clear", save_button.x + offset + save_button.w, save_button.y )
-    function clear_button:onClick()
-        for y = 1, #Map do
-            for x = 1, #Map[y] do
-                Map[y][x] = TILE_VOID
-            end
-        end
-    end
-
-    --  > Load button
-    y, h = self:createEditableNumber( "Map ID", offset, save_button.y + clear_button.h + offset * 2, self.map_id or 1, function( value, op ) 
-        if op == "+" then
-            self.map_id = value > #Maps and 1 or value
-        elseif op == "-" then
-            self.map_id = value < 1 and #Maps or value
-        end
-    end )
-
-    local load_button = Button( "Load", offset, offset + y + h )
-    function load_button.onClick()
-        Map:loadMap( Maps[self.map_id], true )
-
-        self.map_width = Map.w / object_size
-        self.map_height = Map.h / object_size
-
-        self.highscore = Game:getHighscore( self.map_id, true )
-    end
-
-    local overwrite_button = Button( "Overwrite", load_button.x + offset + load_button.w, load_button.y )
-    function overwrite_button.onClick()
-        save_button:onClick( Maps[self.map_id].filename )
+        love.system.openURL( "file://" .. love.filesystem.getSaveDirectory() .. "/maps" )
     end
 
     --  > Camera settings
