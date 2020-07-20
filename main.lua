@@ -10,7 +10,7 @@ Game = {
     SoundVolume = .5,
     MusicVolume = .35,
 }
-Game.Version = "1.2.0 DEV"
+Game.Version = "2.0.0"
 Game.Author = ( "By %s" ):format( Game.IsPC and "Guthen" or "Guthen & Nogitsu" )
 
 if not Game.IsPC then
@@ -140,7 +140,7 @@ function Game:playMusic( filename )
 end
 
 if not love.system.hasBackgroundMusic() then
-    Game:playMusic( "anxious.wav" )
+    Game:playMusic( "cool.wav" )
 end
 
 --  > Framework
