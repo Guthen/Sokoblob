@@ -15,7 +15,7 @@ BasePlayer.current_quad = 1
 function BasePlayer:construct()
     Entity.construct( self )
 
-    self.color = BasePlayer.color
+    self.color = MenuScene.player_color or BasePlayer.color
 end
 
 --  > Init player
