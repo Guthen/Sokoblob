@@ -10,6 +10,7 @@ function Slider:construct( text, x, y )
 
     self.text = text or "Slider.text"
     self.label = Label( self.text, x, y )
+    self.value = 0
     
     self.x = x or self.x 
     self.y = ( y or self.y ) + self.label.h + space

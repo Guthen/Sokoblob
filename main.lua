@@ -6,16 +6,16 @@ local pc_os = {
 
 Game = {
     Scores = {},
-    IsPC = pc_os[love.system.getOS()],
+    --IsPC = pc_os[love.system.getOS()],
     SoundVolume = .5,
     MusicVolume = .35,
     Vibration = true,
 }
-Game.Version = "2.0.1"
+Game.Version = "2.0.2"
 Game.Author = ( "By %s" ):format( Game.IsPC and "Guthen" or "Guthen & Nogitsu" )
 
 if not Game.IsPC then
-    love.window.setFullscreen( true )
+    --love.window.setFullscreen( true )
 end
 
 --  > Variables
@@ -120,9 +120,12 @@ function Game:saveScores()
 end
 
 function Game:setScene( scene, ... )
-    Entities:clear()
-    self.ActiveScene = scene
-    love.load( ... )
+    local args = { ... }
+    timer( 0, function()
+        Entities:clear()
+        self.ActiveScene = scene
+        love.load( unpack( args ) )
+    end )
 end
 
 function Game:playSound( filename )
@@ -140,9 +143,9 @@ function Game:playMusic( filename )
     Game.Music = sound
 end
 
-if not love.system.hasBackgroundMusic() then
+--if not love.system.hasBackgroundMusic() then
     Game:playMusic( "cool.wav" )
-end
+--end
 
 --  > Framework
 function love.load( ... )
@@ -153,6 +156,15 @@ end
 function love.update( dt )
     --  > Scene
     Game.ActiveScene:update( dt )
+
+    --  > Timers
+    for i, v in ipairs( Game.Timers ) do
+        v.time = v.time - dt
+        if v.time <= 0 then
+            v.callback()
+            table.remove( Game.Timers, i )
+        end
+    end
 end
 
 function love.keypressed( key )
