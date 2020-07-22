@@ -6,7 +6,7 @@ local pc_os = {
 
 Game = {
     Scores = {},
-    --IsPC = pc_os[love.system.getOS()],
+    IsPC = pc_os[love.system.getOS()],
     SoundVolume = .5,
     MusicVolume = .35,
     Vibration = true,
@@ -15,7 +15,7 @@ Game.Version = "2.0.2"
 Game.Author = ( "By %s" ):format( Game.IsPC and "Guthen" or "Guthen & Nogitsu" )
 
 if not Game.IsPC then
-    --love.window.setFullscreen( true )
+    love.window.setFullscreen( true )
 end
 
 --  > Variables
