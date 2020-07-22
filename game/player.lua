@@ -1,24 +1,40 @@
-Player = Entity()
-Player.image = love.graphics.newImage( "images/blob.png" )
-Player.z_index = 1
+BasePlayer = class( Entity )
+BasePlayer.image = love.graphics.newImage( "images/blob.png" )
+BasePlayer.z_index = 1
+BasePlayer.scale = 1
+BasePlayer.color = { 97 / 255, 211 / 255, 227 / 255 }
 
 --  > Create animations quads
 local quads = {}
-for x = 0, Player.image:getWidth() - tile_size, tile_size do
-    quads[#quads + 1] = love.graphics.newQuad( x, 0, tile_size, tile_size, Player.image:getDimensions() )
+for x = 0, BasePlayer.image:getWidth() - tile_size, tile_size do
+    quads[#quads + 1] = love.graphics.newQuad( x, 0, tile_size, tile_size, BasePlayer.image:getDimensions() )
 end
-Player.quads = quads
-Player.current_quad = 1
+BasePlayer.quads = quads
+BasePlayer.current_quad = 1
+
+function BasePlayer:construct()
+    Entity.construct( self )
+
+    self.color = MenuScene.player_color or BasePlayer.color
+end
 
 --  > Init player
-function Player:init()
-    Player.moves = 0
-    Player.anim_x = Player.x
-    Player.anim_y = Player.y
+function BasePlayer:init()
+    self.moves = 0
+    self.anim_x = self.x
+    self.anim_y = self.y
+
+    if not Game.IsPC then
+        local space = 5
+        InputButton( button_size + ui_offset + space, love.graphics.getHeight() - button_size * 2 - ( ui_offset + space ), "z", 2 )
+        InputButton( ui_offset, love.graphics.getHeight() - button_size - ui_offset, "q", 3 )
+        InputButton( button_size + ui_offset + space, love.graphics.getHeight() - button_size - ui_offset, "s", 4 )
+        InputButton( button_size * 2 + ( ui_offset + space * 2 ), love.graphics.getHeight() - button_size - ui_offset, "d", 1 )
+    end
 end
 
 local time, next_frame_time = 0, .5
-function Player:think( dt )
+function BasePlayer:think( dt )
     --  > Animation
     time = time + dt
     if time > next_frame_time then
@@ -32,7 +48,7 @@ function Player:think( dt )
 end
 
 --  > Movement
-function Player:move( x, y )
+function BasePlayer:move( x, y )
     --  > Tile collision
     if not Map:checkCollision( self.x + x, self.y + y ) then
         --  > Moving cube
@@ -79,24 +95,40 @@ local directions = {
         y = 0,
     },
 }
-function Player:keypress( key )
+function BasePlayer:keypress( key )
     local dir = directions[key]
     if not dir then return end
+
+    if GameScene.win then
+        GameScene:nextMap()
+        return
+    end
 
     self:move( dir.x, dir.y )
 end
 
-function Player:draw()
-    love.graphics.draw( self.image, self.quads[self.current_quad], self.anim_x * object_size, self.anim_y * object_size, 0, object_size / tile_size, object_size / tile_size )
+local instructions = "Move with 'Z', 'Q', 'S', 'D'\nRetry with 'R'\nGo to menu with 'Escape'"
+local tall = get_string_tall( instructions )
+function BasePlayer:draw( only_player )
+    --  > Player
+    love.graphics.setColor( self.color )
+    love.graphics.draw( self.image, self.quads[self.current_quad], self.anim_x * object_size, self.anim_y * object_size, 0, object_size / tile_size * self.scale, object_size / tile_size * self.scale )
 
-    local limit = 400
+    --  > Texts
+    if only_player then return end
+
     love.graphics.push()
     love.graphics.origin()
-
+    love.graphics.setColor( 1, 1, 1 )
+    
     --  > Moves
-    love.graphics.printf( self.moves .. " moves", love.graphics.getWidth() / 2 - limit / 2, 60, limit, "center" )
+    local limit = love.graphics.getWidth() * .5
+    love.graphics.printf( self.moves .. " moves", love.graphics.getWidth() / 2 - limit / 2, ui_offset, limit, "center" )
+    
     --  > Keys
-    love.graphics.printf( "Move with 'Z', 'Q', 'S', 'D'\nRetry with 'R'", 20, love.graphics.getHeight() - 45, limit )
+    if Game.IsPC then
+        love.graphics.printf( instructions, ui_offset, love.graphics.getHeight() - tall - ui_offset, limit )
+    end
     
     love.graphics.pop()
 end

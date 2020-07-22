@@ -1,11 +1,34 @@
+local pc_os = {
+    ["Windows"] = true,
+    ["OS X"] = true,
+    ["Linux"] = true,
+}
+
+Game = {
+    Scores = {},
+    IsPC = pc_os[love.system.getOS()],
+    SoundVolume = .5,
+    MusicVolume = .35,
+    Vibration = true,
+}
+Game.Version = "2.0.2"
+Game.Author = ( "By %s" ):format( Game.IsPC and "Guthen" or "Guthen & Nogitsu" )
+
+if not Game.IsPC then
+    love.window.setFullscreen( true )
+end
+
 --  > Variables
-object_size, tile_size = 64, 16
+local w, h = love.graphics.getDimensions()
+object_size, tile_size, button_size, ui_offset = w * .035 + h * .044, 16, w * .06 + h * .06, w * .015 + h * .015
 map_id = 1
 
 --  > Graphics settings
 love.graphics.setDefaultFilter( "nearest" )
 love.graphics.setBackgroundColor( 73 / 255, 170 / 255, 16 / 255 )
-love.graphics.setFont( love.graphics.newFont( "fonts/SMB2.ttf" ) )
+
+Game.Font = love.graphics.newFont( "fonts/SMB2.ttf", w * .01 + h * .0075 )
+love.graphics.setFont( Game.Font )
 
 --  > Require all files in specific folder
 local function require_folder( folder )
@@ -19,86 +42,152 @@ local function require_folder( folder )
     end
 end
 require_folder( "utils" )
+require_folder( "scenes" )
 require_folder( "game" )
 
 --  > Game
-Game = {}
+Game.ActiveScene = MenuScene
+
 function Game:reload()
     Doors:deleteAll()
     Cubes:deleteAll()
     love.load()
 end
 
---  > Framework
-function love.load()
-    --  > Init entities
-    for i, v in ipairs( Entities ) do
-        v:init()
+local score_filename = "scores.sb"
+function Game:loadScores()
+    if not love.filesystem.getInfo( score_filename ) then return print( "Scores: failed loading" ) end
+
+    local i = 1
+    for l in love.filesystem.lines( score_filename ) do
+        local map_name, score = l:match( "([%w-_]+)%:%s?(%d+)" )
+        if not map_name or not score then 
+            print( "Scores: failed to read line " .. i ) 
+        else
+            self.Scores[map_name] = tonumber( score )
+        end
+
+        i = i + 1
     end
 
-    --  > Sort entities by ZIndex
-    table.sort( Entities, function( a, b )
-        return a.z_index < b.z_index
-    end )
+    print( "Scores: loaded" )
+end
+Game:loadScores()
+
+function Game:getHighscore( map_id, creator_score )
+    local map = Maps[map_id]
+    if not map then return -1 end
+
+    local score = ( creator_score and map.level.high_score or Game.Scores[map.filename] ) or -1
+    return score
 end
 
-local win = false
-function love.update( dt )
-    --  > Think entities
-    for i, v in ipairs( Entities ) do
-        v:think( dt )
-    end
-
-    --  > Get game win
-    win = Cubes:checkWin()
-end
-
-function love.keypressed( key )
-    --  > Reload map
-    if key == "r" then
-        print( "Game: retry" )
-        Game:reload()
-        return
-    end
-
-    --  > Next map
-    if win then
-        map_id = map_id + 1 > #maps and 1 or map_id + 1
-        Game:reload()
-        return
-    end
-
-    --  > Entities hook
-    for i, v in ipairs( Entities ) do
-        v:keypress( key )
-    end 
-end 
-
-function love.draw()
-    --  > Objects draw
-    Camera:push()
-    for i, v in ipairs( Entities ) do
-        if v.color then love.graphics.setColor( v.color ) end
-        v:draw()
-    end
-    Camera:pop()
-
-    --  > Win message
-    if win then
-        local limit = 500
-        love.graphics.setColor( 1, 1, 1 )
-        love.graphics.printf( "You won!\nPress any key to get to the next map", love.graphics.getWidth() / 2 - limit / 2, 20, limit, "center" )
-    
-        --  > Game end message
-        if map_id == #maps then
-            local limit, scale = 600, 1.25
-            love.graphics.printf( "Congratulations, you finished the game!", love.graphics.getWidth() / 2 - limit * scale / 2, love.graphics.getHeight() / 2, limit, "center", 0, scale, scale )
-            scale = .85
-            love.graphics.printf( "It wasn't hard, right?", love.graphics.getWidth() / 2 - limit * scale / 2, love.graphics.getHeight() / 2 + 20, limit, "center", 0, scale, scale )
+function Game:getScoreStars( high_score, score )
+    local score_stars = 0
+    if score then
+        if high_score >= score then 
+            score_stars = 3 
+        elseif high_score + high_score * .5 >= score then
+            score_stars = 2
+        else
+            score_stars = 1
         end
     end
 
-    --  > FPS
-    local limit = 200
-    love.graphics.printf( "FPS " .. love.timer.getFPS(), love.graphics.getWidth() - limit / 2, 20, limit )
+    return score_stars
+end
+
+function Game:setScore( map_name, score )
+    print( ( "Scores: new map_name=%q score=%d" ):format( map_name, score ) )
+
+    self.Scores[map_name] = score
+    self:saveScores()
+end
+
+function Game:saveScores()
+    local content = ""
+
+    for k, v in pairs( self.Scores ) do
+        content = content .. ( "%s: %d\r\n" ):format( k, v )
+    end
+
+    local success, error = love.filesystem.write( score_filename, content ) 
+    if success then
+        print( "Scores: saved" )
+    else
+        print( ( "Scores: failed to save - %q" ):format( error ) )
+    end
+end
+
+function Game:setScene( scene, ... )
+    local args = { ... }
+    timer( 0, function()
+        Entities:clear()
+        self.ActiveScene = scene
+        love.load( unpack( args ) )
+    end )
+end
+
+function Game:playSound( filename )
+    local sound = love.audio.newSource( "sounds/" .. filename, "static" )
+    sound:setVolume( Game.SoundVolume )
+    sound:play()
+end
+
+function Game:playMusic( filename )
+    local sound = love.audio.newSource( "sounds/musics/" .. filename, "stream" )
+    sound:setVolume( Game.MusicVolume )
+    sound:setLooping( true )
+    sound:play()
+
+    Game.Music = sound
+end
+
+--if not love.system.hasBackgroundMusic() then
+    Game:playMusic( "cool.wav" )
+--end
+
+--  > Framework
+function love.load( ... )
+    --  > Scene
+    Game.ActiveScene:load( ... )
+end
+
+function love.update( dt )
+    --  > Scene
+    Game.ActiveScene:update( dt )
+
+    --  > Timers
+    for i, v in ipairs( Game.Timers ) do
+        v.time = v.time - dt
+        if v.time <= 0 then
+            v.callback()
+            table.remove( Game.Timers, i )
+        end
+    end
+end
+
+function love.keypressed( key )
+    --  > Scene
+    Game.ActiveScene:keypressed( key )
 end 
+
+function love.mousepressed( x, y, mouse_button )
+    Game.ActiveScene:mousepressed( x, y, mouse_button )
+end
+
+function love.wheelmoved( x, y )
+    Game.ActiveScene:wheelmoved( x, y )
+end
+
+function love.draw()
+    --  > Scene
+    Game.ActiveScene:draw( love.graphics.getDimensions() )
+
+    --  > FPS
+    love.graphics.setColor( 1, 1, 1 )
+    if Game.IsPC then
+        local limit = w * .25
+        love.graphics.printf( "FPS " .. love.timer.getFPS(), love.graphics.getWidth() - limit - ui_offset, ui_offset, limit, "right" )
+    end
+end

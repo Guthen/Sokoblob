@@ -1,27 +1,29 @@
-Doors = Container()
-Doors.z_index = 0
+BaseDoors = class( Container )
+BaseDoors.z_index = 0
 
-function Doors:init()
+function BaseDoors:init()
     self.checked_buttons = 0
 end
 
-function Doors:create( x, y )
+function BaseDoors:create( x, y )
     local door = {}
     door.x = x
     door.y = y
     door.toggled = false
 
-    Doors[#Doors + 1] = door
+    self[#self + 1] = door
     return door
 end
 
-function Doors:triggerDoors()
+function BaseDoors:triggerDoors()
     for i, v in ipairs( self ) do
         v.toggled = not v.toggled
     end
+
+    Game:playSound( ( "door_switch%02d.wav" ):format( math.random( 3 ) ) )
 end
 
-function Doors:check()
+function BaseDoors:check()
     self.checked_buttons = self.checked_buttons + 1
 
     if self.checked_buttons == 1 then
@@ -29,7 +31,7 @@ function Doors:check()
     end
 end
 
-function Doors:uncheck()
+function BaseDoors:uncheck()
     self.checked_buttons = self.checked_buttons - 1
 
     if self.checked_buttons == 0 then
@@ -37,18 +39,18 @@ function Doors:uncheck()
     end
 end
 
-function Doors:getClosedDoorAt( x, y )
+function BaseDoors:getClosedDoorAt( x, y )
     local door = self:getAt( x, y )
     return door and not door.toggled
 end
 
-local image, quads = love.graphics.newImage( "images/door.png" ), {}
-for x = 0, image:getWidth() - tile_size, tile_size do
-    quads[#quads + 1] = love.graphics.newQuad( x, 0, tile_size, tile_size, image:getDimensions() )
+BaseDoors.image, BaseDoors.quads = love.graphics.newImage( "images/door.png" ), {}
+for x = 0, BaseDoors.image:getWidth() - tile_size, tile_size do
+    BaseDoors.quads[#BaseDoors.quads + 1] = love.graphics.newQuad( x, 0, tile_size, tile_size, BaseDoors.image:getDimensions() )
 end
 
-function Doors:draw()
+function BaseDoors:draw()
     for i, v in ipairs( self ) do
-        love.graphics.draw( image, quads[v.toggled and 2 or 1], v.x * object_size, v.y * object_size, 0, object_size / tile_size, object_size / tile_size )
+        love.graphics.draw( self.image, self.quads[v.toggled and 2 or 1], v.x * object_size, v.y * object_size, 0, object_size / tile_size, object_size / tile_size )
     end
 end
