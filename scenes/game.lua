@@ -32,10 +32,12 @@ function GameScene:update( dt )
     --  > Get game win
     self.win = Cubes:checkWin()
 
-    if self.win and not vibrated then
-        vibrated = true
+    if Game.Vibration then
+        if self.win and not vibrated then
+            vibrated = true
 
-        love.system.vibrate( 0.2 )
+            love.system.vibrate( 0.2 )
+        end
     end
 end
 

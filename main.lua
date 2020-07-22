@@ -9,8 +9,9 @@ Game = {
     IsPC = pc_os[love.system.getOS()],
     SoundVolume = .5,
     MusicVolume = .35,
+    Vibration = true,
 }
-Game.Version = "2.0.0"
+Game.Version = "2.0.1"
 Game.Author = ( "By %s" ):format( Game.IsPC and "Guthen" or "Guthen & Nogitsu" )
 
 if not Game.IsPC then
