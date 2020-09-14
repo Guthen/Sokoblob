@@ -33,6 +33,10 @@ function Crate:move( x, y )
     if Map:getTileAt( self.x, self.y ) == TILE_BUTTON then
         Doors:check()
     end
+
+    --  > Spring
+    local spring = Springs:getAt( self.x, self.y )
+    if spring then spring:jump( self, x * 1.5, y * 1.5 ) end
 end
 
 function Crate:think( dt )
@@ -69,7 +73,7 @@ function Ball:move( x, y )
     local new_pos = 0
     if not ( x == 0 ) then
         for i = self.x, x > 0 and w or 1, x > 0 and 1 or -1 do
-            if Map:checkCollision( i, self.y ) then
+            if Map:checkCollision( i, self.y ) or Crates:getAt( i, self.y ) then
                 break
             else
                 new_pos = i
@@ -79,7 +83,7 @@ function Ball:move( x, y )
         self.x = new_pos
     elseif not ( y == 0 ) then
         for i = self.y, y > 0 and h or 1, y > 0 and 1 or -1 do
-            if Map:checkCollision( self.x, i ) then
+            if Map:checkCollision( self.x, i ) or Crates:getAt( self.x, i ) then
                 break
             else
                 new_pos = i

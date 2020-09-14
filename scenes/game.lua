@@ -9,6 +9,7 @@ function GameScene:load()
     Player = BasePlayer()
     Doors = DoorsContainer()
     Crates = CratesContainer()
+    Springs = SpringsContainer()
 
     --  > Init
     Map:loadMap( map_id )

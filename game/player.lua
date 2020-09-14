@@ -49,6 +49,8 @@ end
 
 --  > Movement
 function BasePlayer:move( x, y )
+    if self.blocked then return end
+
     --  > Tile collision
     if not Map:checkCollision( self.x + x, self.y + y ) then
         --  > Moving crate
@@ -70,6 +72,10 @@ function BasePlayer:move( x, y )
         --  > Movement
         self.x = self.x + x
         self.y = self.y + y
+
+        --  > Spring
+        local spring = Springs:getAt( self.x, self.y )
+        if spring then spring:jump( self, x, y ) end
 
         --  > Score
         self.moves = self.moves + 1
