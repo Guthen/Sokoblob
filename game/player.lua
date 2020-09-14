@@ -51,17 +51,17 @@ end
 function BasePlayer:move( x, y )
     --  > Tile collision
     if not Map:checkCollision( self.x + x, self.y + y ) then
-        --  > Moving cube
-        local cube = Cubes:getAt( self.x + x, self.y + y )
-        if cube then
-            --  > Collision with cubes 
-            if Map:checkCollision( cube.x + x, cube.y + y ) or Cubes:getAt( cube.x + x, cube.y + y ) then return end
+        --  > Moving crate
+        local crate = Crates:getAt( self.x + x, self.y + y )
+        if crate then
+            --  > Collision with Crates 
+            if Map:checkCollision( crate.x + x, crate.y + y ) or Crates:getAt( crate.x + x, crate.y + y ) then return end
 
             --  > Collision with closed doors
-            if Doors:getClosedDoorAt( cube.x + x, cube.y + y ) then return end
+            if Doors:getClosedDoorAt( crate.x + x, crate.y + y ) then return end
 
-            --  > Move cube
-            cube:move( x, y )
+            --  > Move crate
+            crate:move( x, y )
         end
 
         --  > Collision with closed doors

@@ -40,6 +40,16 @@ function get_string_tall( text )
 	return lines * Game.Font:getHeight()
 end
 
+function tileset( image )
+	quads = {}
+	
+	for x = 0, image:getWidth() - tile_size, tile_size do
+		quads[#quads + 1] = love.graphics.newQuad( x, 0, tile_size, tile_size, image:getDimensions() )
+	end
+
+	return quads
+end
+
 Game.Timers = {} 
 function timer( seconds, callback )
 	Game.Timers[#Game.Timers + 1] = { time = seconds, callback = callback }

@@ -1,21 +1,37 @@
-BaseDoors = class( Container )
-BaseDoors.z_index = 0
+--  > Door
+Door = class( Entity )
+Door.x, Door.y = 0, 0
+Door.toggled = false
+Door.image = love.graphics.newImage( "images/door.png" )
+Door.quads = tileset( Door.image )
+Door.z_index = 0
 
-function BaseDoors:init()
+function Door:construct( x, y )
+    Entity.construct( self )
+
+    self.x = x
+    self.y = y
+end
+
+function Door:draw()
+    love.graphics.draw( self.image, self.quads[self.toggled and 2 or 1], self.x * object_size, self.y * object_size, 0, object_size / tile_size, object_size / tile_size )
+end
+
+--  > Container
+DoorsContainer = class( Container )
+
+function DoorsContainer:init()
     self.checked_buttons = 0
 end
 
-function BaseDoors:create( x, y )
-    local door = {}
-    door.x = x
-    door.y = y
-    door.toggled = false
+function DoorsContainer:create( x, y )
+    local door = Door( x, y )
 
     self[#self + 1] = door
     return door
 end
 
-function BaseDoors:triggerDoors()
+function DoorsContainer:triggerDoors()
     for i, v in ipairs( self ) do
         v.toggled = not v.toggled
     end
@@ -23,7 +39,7 @@ function BaseDoors:triggerDoors()
     Game:playSound( ( "door_switch%02d.wav" ):format( math.random( 3 ) ) )
 end
 
-function BaseDoors:check()
+function DoorsContainer:check()
     self.checked_buttons = self.checked_buttons + 1
 
     if self.checked_buttons == 1 then
@@ -31,7 +47,7 @@ function BaseDoors:check()
     end
 end
 
-function BaseDoors:uncheck()
+function DoorsContainer:uncheck()
     self.checked_buttons = self.checked_buttons - 1
 
     if self.checked_buttons == 0 then
@@ -39,18 +55,7 @@ function BaseDoors:uncheck()
     end
 end
 
-function BaseDoors:getClosedDoorAt( x, y )
+function DoorsContainer:getClosedDoorAt( x, y )
     local door = self:getAt( x, y )
     return door and not door.toggled
-end
-
-BaseDoors.image, BaseDoors.quads = love.graphics.newImage( "images/door.png" ), {}
-for x = 0, BaseDoors.image:getWidth() - tile_size, tile_size do
-    BaseDoors.quads[#BaseDoors.quads + 1] = love.graphics.newQuad( x, 0, tile_size, tile_size, BaseDoors.image:getDimensions() )
-end
-
-function BaseDoors:draw()
-    for i, v in ipairs( self ) do
-        love.graphics.draw( self.image, self.quads[v.toggled and 2 or 1], v.x * object_size, v.y * object_size, 0, object_size / tile_size, object_size / tile_size )
-    end
 end

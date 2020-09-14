@@ -36,14 +36,12 @@ function BaseMap:construct()
 end
 
 function BaseMap:loadMap( id, not_playable )
-    --print( "Level: id=" .. id )
+    self.spots = 0
 
     local map = type( id ) == "table" and id or Maps[id]
-    --print( "Level: " .. ( map and "found" or "not found" ) )
     if not map then return end
 
     map = map.level or map
-    --print( ( "Level: bounds w=%d h=%d" ):format( #map[1], #map ) )
 
     --  > Delete previous map
     for i, v in ipairs( self ) do
@@ -72,7 +70,6 @@ function BaseMap:loadMap( id, not_playable )
             end
 
             self[y][x] = xv
-            --print( ( "Level: set x=%d y=%d to tile=%d (%s)" ):format( x, y, xv, self[y][x] and "success" or "failed" ) )
         end
     end
 
@@ -84,7 +81,7 @@ function BaseMap:loadMap( id, not_playable )
         for y, yv in ipairs( self ) do
             for x, xv in ipairs( yv ) do
                 if xv == TILE_CUBE then
-                    Cubes:create( x, y )
+                    Crates:create( x, y )
                     self[y][x] = 0
                 elseif xv == TILE_DOOR or xv == TILE_DOOR_CLOSE then 
                     Doors:create( x, y ).toggled = xv == TILE_DOOR_CLOSE
@@ -104,10 +101,6 @@ function BaseMap:loadMap( id, not_playable )
     if not map.spawn or not_playable then return end
     Player.x = map.spawn.x
     Player.y = map.spawn.y
-end
-
-function BaseMap:init()
-    self.spots = 0
 end
 
 function BaseMap:computeSize()

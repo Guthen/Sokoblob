@@ -51,9 +51,9 @@ function MapEditorScene:load()
 
     --  > Init map
     Map = BaseMap()
-    Map.images[TILE_CUBE] = BaseCubes.image
-    Map.images[TILE_DOOR] = BaseDoors.image
-    Map.images[TILE_DOOR_CLOSE] = BaseDoors.image
+    Map.images[TILE_CUBE] = Crate.image
+    Map.images[TILE_DOOR] = Door.image
+    Map.images[TILE_DOOR_CLOSE] = Door.image
     Map.images[TILE_PLAYER] = BasePlayer.image
 
     if self.map then

@@ -7,15 +7,12 @@ function GameScene:load()
     --  > Create entities
     Map = BaseMap()
     Player = BasePlayer()
-    Doors = BaseDoors()
-    Cubes = BaseCubes()
+    Doors = DoorsContainer()
+    Crates = CratesContainer()
 
     --  > Init
-    Map:init()
     Map:loadMap( map_id )
-    Player:init()
-    Doors:init()
-    Cubes:init()
+    Entities:call( "init" )
 
     --  > Sort
     if not Game.IsPC then
@@ -30,7 +27,7 @@ function GameScene:update( dt )
     Entities:call( "think", dt )
 
     --  > Get game win
-    self.win = Cubes:checkWin()
+    self.win = Crates:checkWin()
 
     if Game.Vibration then
         if self.win and not vibrated then

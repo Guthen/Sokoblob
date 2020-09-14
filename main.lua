@@ -50,7 +50,7 @@ Game.ActiveScene = MenuScene
 
 function Game:reload()
     Doors:deleteAll()
-    Cubes:deleteAll()
+    Crates:deleteAll()
     love.load()
 end
 

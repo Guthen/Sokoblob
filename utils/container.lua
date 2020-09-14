@@ -3,6 +3,7 @@ require( "utils/entity" )
 Container = class( Entity )
 
 function Container:create( x, y ) end
+function Container:draw() end
 
 function Container:deleteAll()
     for i, v in ipairs( self ) do
