@@ -52,6 +52,7 @@ function MapEditorScene:load()
     --  > Init map
     Map = BaseMap()
     Map.images[TILE_CUBE] = Crate.image
+    Map.images[TILE_BALL] = Ball.image
     Map.images[TILE_DOOR] = Door.image
     Map.images[TILE_DOOR_CLOSE] = Door.image
     Map.images[TILE_PLAYER] = BasePlayer.image
@@ -83,6 +84,7 @@ function MapEditorScene:load()
         TILE_DOOR,
         TILE_DOOR_CLOSE,
         TILE_PLAYER,
+        TILE_BALL,
     }
     
     --  > Editor UI

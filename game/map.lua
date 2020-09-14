@@ -14,6 +14,7 @@ enum( "TILE_", {
     BUTTON = 5,
     DOOR = 6,
     DOOR_CLOSE = 7,
+    BALL = 8,
 } )
 
 --  > Load Maps
@@ -82,6 +83,9 @@ function BaseMap:loadMap( id, not_playable )
             for x, xv in ipairs( yv ) do
                 if xv == TILE_CUBE then
                     Crates:create( x, y )
+                    self[y][x] = 0
+                elseif xv == TILE_BALL then
+                    Crates:create( x, y, Ball )
                     self[y][x] = 0
                 elseif xv == TILE_DOOR or xv == TILE_DOOR_CLOSE then 
                     Doors:create( x, y ).toggled = xv == TILE_DOOR_CLOSE

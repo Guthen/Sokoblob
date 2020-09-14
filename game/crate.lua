@@ -44,6 +44,56 @@ function Crate:draw()
     love.graphics.draw( self.image, self.anim_x * object_size, self.anim_y * object_size, 0, object_size / self.image:getWidth(), object_size / self.image:getHeight() )
 end
 
+--  > Ball
+Ball = class( Crate )
+Ball.image = love.graphics.newImage( "images/ball.png" )
+Ball.quads = tileset( Ball.image )
+Ball.quad = 1
+Ball.anim_time, Ball.fps = 0, 5
+
+function Ball:think( dt )
+    Crate.think( self, dt )
+
+    if not ( self.x == self.anim_x ) or not ( self.y == self.anim_y ) then
+        self.anim_time = self.anim_time + dt
+        if self.anim_time >= 1 / self.fps then
+            self.quad = self.quad + 1 > #self.quads and 1 or self.quad + 1
+            self.anim_time = 0
+        end
+    end
+end
+
+function Ball:move( x, y )
+    local w, h = Map.w / object_size, Map.h / object_size
+
+    local new_pos = 0
+    if not ( x == 0 ) then
+        for i = self.x, x > 0 and w or 1, x > 0 and 1 or -1 do
+            if Map:checkCollision( i, self.y ) then
+                break
+            else
+                new_pos = i
+            end
+        end
+
+        self.x = new_pos
+    elseif not ( y == 0 ) then
+        for i = self.y, y > 0 and h or 1, y > 0 and 1 or -1 do
+            if Map:checkCollision( self.x, i ) then
+                break
+            else
+                new_pos = i
+            end
+        end
+
+        self.y = new_pos
+    end
+end
+
+function Ball:draw()
+    love.graphics.draw( self.image, self.quads[self.quad], self.anim_x * object_size, self.anim_y * object_size, 0, object_size / tile_size, object_size / tile_size )
+end
+
 --  > Container
 CratesContainer = class( Container )
 
